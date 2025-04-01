@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+      {
+        "name": "CVRDev.dev.navertica.com",
+        "request": "launch",
+        "type": "al",
+        "environmentType": "OnPrem",
+        "server": "https://CVRDev.dev.navertica.com",
+        "serverInstance": "BC",
+        "authentication": "AAD",
+        "startupObjectId": 22, //22 is the main page
+        "startupObjectType": "Table",
+        "breakOnError": true,
+        "launchBrowser": true,
+        "enableLongRunningSqlStatements": true,
+        "enableSqlInformationDebugger": true,
+        "primaryTenantDomain": "navertica.com",
+        "tenant": "default"
+      }
+    ]
+ }
