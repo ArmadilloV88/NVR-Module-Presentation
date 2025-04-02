@@ -39,18 +39,18 @@ jobs:
           
           # Get latest artifact URL for Business Central
           $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox"
-
-          # Debugging: Check if artifact URL is being fetched correctly
-          Write-Host "Artifact URL: $artifactUrl"
-          
-          if (-not $artifactUrl) {
-            throw "Failed to retrieve artifact URL."
-          }
       
           # Create Business Central container using artifacts
-          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential ` 
-            -artifactUrl $artifactUrl -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com" ` 
-            -updateHosts
+          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential `
+          -artifactUrl $artifactUrl -publicDnsName "CVRDev.dev.navertica.com" `
+          -updateHosts
+        shell: pwsh
+
+
+      - name: Compile AL Project
+        run: |
+          Import-Module BcContainerHelper
+          Compile-BcContainerApp -containerName "BCContainer" -appProjectFolder "$env:GITHUB_WORKSPACE" -appOutputFile "Output.app"
         shell: pwsh
 
       - name: Compile AL Project
