@@ -31,52 +31,17 @@ jobs:
       - name: Setup Business Central Development Environment
         run: |
           Import-Module BcContainerHelper
+          $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
           
-          # Debugging - Print the username (password will not be printed for security)
-          Write-Host "Using BC Username: $env:BC_USERNAME"
-          
-          # Define paths
-          $artifactCachePath = "C:\bc-cache"
-          $artifactVersion = "26.0.30643.32531"
-          $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox" -version $artifactVersion
-          
-          # Ensure cache directory exists
-          if (!(Test-Path $artifactCachePath)) {
-            New-Item -ItemType Directory -Path $artifactCachePath
-          }
-          
-          # Check if the artifact is already cached
-          if (!(Test-Path "$artifactCachePath\$artifactVersion.zip")) {
-            Write-Host "Downloading Business Central artifact..."
-            Invoke-WebRequest -Uri $artifactUrl -OutFile "$artifactCachePath\$artifactVersion.zip"
-          } else {
-            Write-Host "Using cached Business Central artifact."
-          }
-          
-          # Create container with credentials from GitHub Secrets
-          $username = $env:BC_USERNAME
-          $password = $env:BC_PASSWORD
-
-          if (-not $username) {
-            Write-Error "BC_USERNAME is not set."
-          }
-
-          if (-not $password) {
-            Write-Error "BC_PASSWORD is not set."
-          }
-          
-          # Create PSCredential and pass to New-BcContainer
-          $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
-          $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
-          
-          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword `
-            -Credential $credential `
-            -artifactUrl "$artifactCachePath\$artifactVersion.zip" -licenseFile "C:\Path\To\Your\License.flf" `
-            -publicDnsName "CVRDev.dev.navertica.com" -updateHosts
+          # Get latest artifact URL for Business Central
+          $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox"
+      
+          # Create Business Central container using artifacts
+          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential `
+            -artifactUrl $artifactUrl -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com" `
+            -updateHosts
         shell: pwsh
-        env:
-          BC_USERNAME: ${{ secrets.BC_USERNAME }}
-          BC_PASSWORD: ${{ secrets.BC_PASSWORD }}
 
       - name: Compile AL Project
         run: |
