@@ -16,18 +16,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install AL Language Extension
-        run: |
-          $vscodePath = "${env:ProgramFiles}\Microsoft VS Code"
-          $extensionPath = "$vscodePath\data\extensions\microsoft.al-*"
-          $alcPath = Get-ChildItem -Path $extensionPath -Recurse -Filter "alc.exe" | Select-Object -ExpandProperty FullName
-          echo "ALC Path: $alcPath"
-          echo "##[set-output name=alcPath;]$alcPath"
-        shell: pwsh
+      - name: Setup Business Central Development Environment
+        uses: microsoft/navcontainerhelper@main
+        with:
+          containerName: 'bcdev'
+          artifactUrl: 'https://bc.sandbox.url'
+          licenseFile: ${{ secrets.BC_LICENSE }}
 
       - name: Compile AL Project
         run: |
-          ALCompiler\alc.exe /project:. /out:Output.app /packagecachepath:"./.alpackages"
+          Import-Module BCContainerHelper
+          New-BcContainer -accept_eula -containerName "BCContainer" -artifactUrl "https://bc.sandbox.url"
+          Compile-BcContainerApp -containerName "BCContainer" -appProjectFolder "$env:GITHUB_WORKSPACE" -appOutputFile "Output.app"
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -67,7 +67,4 @@ jobs:
 
       - name: Deploy to Business Central Sandbox
         run: |
-          # Example: Use BCContainerHelper to deploy the extension
-          Import-Module BCContainerHelper
-          New-BcContainer -accept_eula -containerName "BCContainer" -artifactUrl "https://bc.sandbox.url"
           Publish-BcContainerApp -containerName "BCContainer" -appFile "Output.app"
