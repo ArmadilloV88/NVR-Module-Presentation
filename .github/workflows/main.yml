@@ -28,10 +28,10 @@ jobs:
           Install-Module BcContainerHelper -Force -AllowClobber
         shell: pwsh
 
-      - name: Setup Business Central Development Environment
+            - name: Setup Business Central Development Environment
         run: |
           Import-Module BcContainerHelper
-          
+
           # Define paths
           $artifactCachePath = "C:\bc-cache"
           $artifactVersion = "26.0.30643.32531"
@@ -50,8 +50,12 @@ jobs:
             Write-Host "Using cached Business Central artifact."
           }
           
-          # Create container
+          # Create container with credentials from GitHub Secrets
+          $username = $env:BC_USERNAME
+          $password = $env:BC_PASSWORD
+          
           New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword `
+            -Credential (New-Object System.Management.Automation.PSCredential($username, (ConvertTo-SecureString $password -AsPlainText -Force))) `
             -artifactUrl "$artifactCachePath\$artifactVersion.zip" -licenseFile "C:\Path\To\Your\License.flf" `
             -publicDnsName "CVRDev.dev.navertica.com" -updateHosts
         shell: pwsh
