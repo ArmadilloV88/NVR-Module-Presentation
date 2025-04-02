@@ -57,7 +57,8 @@ jobs:
       - name: Verify BcContainerHelper Cmdlets
         run: |
           Import-Module BcContainerHelper
-          Get-Command -Module BcContainerHelper
+          # Filter commands related to 'Compile' to reduce noise
+          Get-Command -Module BcContainerHelper | Where-Object { $_.Name -like "*Compile*" }
         shell: pwsh
 
       - name: Compile AL Project
