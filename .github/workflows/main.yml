@@ -31,7 +31,7 @@ jobs:
       - name: Setup Business Central Development Environment
         run: |
           Import-Module BcContainerHelper
-
+          
           # Debugging - Print the username (password will not be printed for security)
           Write-Host "Using BC Username: $env:BC_USERNAME"
           
@@ -74,6 +74,9 @@ jobs:
             -artifactUrl "$artifactCachePath\$artifactVersion.zip" -licenseFile "C:\Path\To\Your\License.flf" `
             -publicDnsName "CVRDev.dev.navertica.com" -updateHosts
         shell: pwsh
+        env:
+          BC_USERNAME: ${{ secrets.BC_USERNAME }}
+          BC_PASSWORD: ${{ secrets.BC_PASSWORD }}
 
       - name: Compile AL Project
         run: |
