@@ -27,7 +27,14 @@ jobs:
           Import-Module BcContainerHelper
           $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
           $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
-          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential -imageName "mcr.microsoft.com/businesscentral/sandbox" -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com"
+          
+          # Get latest artifact URL for Business Central
+          $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox"
+      
+          # Create Business Central container using artifacts
+          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential `
+            -artifactUrl $artifactUrl -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com" `
+            -updateHosts
         shell: pwsh
 
       - name: Compile AL Project
