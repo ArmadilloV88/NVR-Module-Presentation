@@ -16,10 +16,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install AL Compiler
+      - name: Install AL Language Extension
         run: |
-          Invoke-WebRequest -Uri "https://businesscentral.dynamics.com/ALCompiler.zip" -OutFile "ALCompiler.zip"
-          Expand-Archive -Path "ALCompiler.zip" -DestinationPath "ALCompiler"
+          $vscodePath = "${env:ProgramFiles}\Microsoft VS Code"
+          $extensionPath = "$vscodePath\data\extensions\microsoft.al-*"
+          $alcPath = Get-ChildItem -Path $extensionPath -Recurse -Filter "alc.exe" | Select-Object -ExpandProperty FullName
+          echo "ALC Path: $alcPath"
+          echo "##[set-output name=alcPath;]$alcPath"
+        shell: pwsh
 
       - name: Compile AL Project
         run: |
