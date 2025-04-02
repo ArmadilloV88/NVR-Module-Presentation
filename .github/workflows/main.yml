@@ -46,13 +46,6 @@ jobs:
           -updateHosts
         shell: pwsh
 
-
-      - name: Compile AL Project
-        run: |
-          Import-Module BcContainerHelper
-          Compile-BcContainerApp -containerName "BCContainer" -appProjectFolder "$env:GITHUB_WORKSPACE" -appOutputFile "Output.app"
-        shell: pwsh
-
       - name: Compile AL Project
         run: |
           Import-Module BcContainerHelper
