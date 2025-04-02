@@ -20,14 +20,13 @@ jobs:
       - name: Cache Business Central Artifact
         uses: actions/cache@v4
         with:
-            path: C:\bc-cache
-            key: bc-artifact-${{ runner.os }}-w1-${{ hashFiles('**/app.json') }}
-            restore-keys: |
-              bc-artifact-${{ runner.os }}-w1-
-              bc-artifact-${{ runner.os }}-w1
-          # Optional if you want to always save cache regardless of hit/miss
-            save-always: false
-            fail-on-cache-miss: false
+          path: C:\bc-cache
+          key: bc-artifact-${{ runner.os }}-w1-${{ hashFiles('**/app.json') }}
+          restore-keys: |
+            bc-artifact-${{ runner.os }}-w1-
+            bc-artifact-${{ runner.os }}-w1
+          save-always: false
+          fail-on-cache-miss: false
 
       - name: Install BcContainerHelper
         run: |
