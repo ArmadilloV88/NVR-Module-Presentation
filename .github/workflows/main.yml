@@ -16,6 +16,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Cache Business Central Artifact
+        uses: actions/cache@v4
+        with:
+          path: C:\bc-cache
+          key: bc-artifact-${{ runner.os }}-w1-26.0.30643.32531
+
       - name: Install BcContainerHelper
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -25,16 +31,29 @@ jobs:
       - name: Setup Business Central Development Environment
         run: |
           Import-Module BcContainerHelper
-          $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
-          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
           
-          # Get latest artifact URL for Business Central
-          $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox"
-      
-          # Create Business Central container using artifacts
-          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential `
-            -artifactUrl $artifactUrl -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com" `
-            -updateHosts
+          # Define paths
+          $artifactCachePath = "C:\bc-cache"
+          $artifactVersion = "26.0.30643.32531"
+          $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox" -version $artifactVersion
+          
+          # Ensure cache directory exists
+          if (!(Test-Path $artifactCachePath)) {
+            New-Item -ItemType Directory -Path $artifactCachePath
+          }
+          
+          # Check if the artifact is already cached
+          if (!(Test-Path "$artifactCachePath\$artifactVersion.zip")) {
+            Write-Host "Downloading Business Central artifact..."
+            Invoke-WebRequest -Uri $artifactUrl -OutFile "$artifactCachePath\$artifactVersion.zip"
+          } else {
+            Write-Host "Using cached Business Central artifact."
+          }
+          
+          # Create container
+          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword `
+            -artifactUrl "$artifactCachePath\$artifactVersion.zip" -licenseFile "C:\Path\To\Your\License.flf" `
+            -publicDnsName "CVRDev.dev.navertica.com" -updateHosts
         shell: pwsh
 
       - name: Compile AL Project
