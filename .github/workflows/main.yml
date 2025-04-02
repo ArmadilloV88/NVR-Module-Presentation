@@ -16,18 +16,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Install BcContainerHelper
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          Install-Module BcContainerHelper -Force -AllowClobber
+        shell: pwsh
+
       - name: Setup Business Central Development Environment
-        uses: microsoft/navcontainerhelper@main
-        with:
-          containerName: 'bcdev'
-          artifactUrl: 'https://bc.sandbox.url'
-          licenseFile: ${{ secrets.BC_LICENSE }}
+        run: |
+          Import-Module BcContainerHelper
+          New-BcContainer -accept_eula -containerName "BCContainer" -artifactUrl "https://bc.sandbox.url"
+        shell: pwsh
 
       - name: Compile AL Project
         run: |
-          Import-Module BCContainerHelper
-          New-BcContainer -accept_eula -containerName "BCContainer" -artifactUrl "https://bc.sandbox.url"
+          Import-Module BcContainerHelper
           Compile-BcContainerApp -containerName "BCContainer" -appProjectFolder "$env:GITHUB_WORKSPACE" -appOutputFile "Output.app"
+        shell: pwsh
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -50,7 +55,9 @@ jobs:
 
       - name: Run Business Central Tests
         run: |
-          # Here, add commands to run AL test automation (requires BC Test Toolkit)
+          Import-Module BcContainerHelper
+          Invoke-BcContainerTest -containerName "BCContainer" -testSuite "Default"
+        shell: pwsh
 
   deploy:
     runs-on: windows-latest
@@ -67,4 +74,6 @@ jobs:
 
       - name: Deploy to Business Central Sandbox
         run: |
+          Import-Module BcContainerHelper
           Publish-BcContainerApp -containerName "BCContainer" -appFile "Output.app"
+        shell: pwsh
