@@ -49,6 +49,17 @@ jobs:
           -updateHosts
         shell: pwsh
 
+      - name: Wait for Container to be ready
+        run: |
+          Start-Sleep -Seconds 15
+        shell: pwsh
+
+      - name: Verify BcContainerHelper Cmdlets
+        run: |
+          Import-Module BcContainerHelper
+          Get-Command -Module BcContainerHelper
+        shell: pwsh
+
       - name: Compile AL Project
         run: |
           Import-Module BcContainerHelper
