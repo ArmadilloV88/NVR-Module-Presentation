@@ -16,11 +16,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Cache Business Central Artifact based on the version
       - name: Cache Business Central Artifact
         uses: actions/cache@v4
         with:
           path: C:\bc-cache
           key: bc-artifact-${{ runner.os }}-w1-26.0.30643.32531
+          restore-keys: |
+            bc-artifact-${{ runner.os }}-w1-
 
       - name: Install BcContainerHelper
         run: |
@@ -38,8 +41,8 @@ jobs:
           $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox"
       
           # Create Business Central container using artifacts
-          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential `
-            -artifactUrl $artifactUrl -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com" `
+          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential ` 
+            -artifactUrl $artifactUrl -licenseFile "C:\Path\To\Your\License.flf" -publicDnsName "CVRDev.dev.navertica.com" ` 
             -updateHosts
         shell: pwsh
 
