@@ -28,7 +28,7 @@ jobs:
           Install-Module BcContainerHelper -Force -AllowClobber
         shell: pwsh
 
-            - name: Setup Business Central Development Environment
+      - name: Setup Business Central Development Environment
         run: |
           Import-Module BcContainerHelper
 
