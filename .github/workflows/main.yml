@@ -32,6 +32,9 @@ jobs:
         run: |
           Import-Module BcContainerHelper
 
+          # Debugging - Print the username (password will not be printed for security)
+          Write-Host "Using BC Username: $env:BC_USERNAME"
+          
           # Define paths
           $artifactCachePath = "C:\bc-cache"
           $artifactVersion = "26.0.30643.32531"
@@ -53,9 +56,21 @@ jobs:
           # Create container with credentials from GitHub Secrets
           $username = $env:BC_USERNAME
           $password = $env:BC_PASSWORD
+
+          if (-not $username) {
+            Write-Error "BC_USERNAME is not set."
+          }
+
+          if (-not $password) {
+            Write-Error "BC_PASSWORD is not set."
+          }
+          
+          # Create PSCredential and pass to New-BcContainer
+          $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential($username, $securePassword)
           
           New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword `
-            -Credential (New-Object System.Management.Automation.PSCredential($username, (ConvertTo-SecureString $password -AsPlainText -Force))) `
+            -Credential $credential `
             -artifactUrl "$artifactCachePath\$artifactVersion.zip" -licenseFile "C:\Path\To\Your\License.flf" `
             -publicDnsName "CVRDev.dev.navertica.com" -updateHosts
         shell: pwsh
