@@ -1,0 +1,24 @@
+{
+    "al.enableCodeAnalysis": true,
+    "al.codeAnalyzers": [
+        "${CodeCop}",
+        "${PerTenantExtensionCop}",
+        "${UICop}"
+    ],
+    "explorer.confirmDelete": false,
+    "editor.codeActionsOnSave": {
+        
+        
+        
+    },
+    "workbench.editorAssociations": {
+        "*.app": "default"
+    },
+    "workbench.colorTheme": "AL Theme",
+    "editor.dropIntoEditor.preferences": [
+        
+    ],
+
+    }
+
+    
