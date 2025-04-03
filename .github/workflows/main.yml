@@ -16,6 +16,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Install BcContainerHelper
+        run: |
+          Install-PackageProvider -Name NuGet -Force
+          Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+          Install-Module BcContainerHelper -Force -AllowClobber -Scope CurrentUser
+          Import-Module BcContainerHelper
+        shell: pwsh
+
       - name: Setup Business Central Container
         run: |
           Import-Module BcContainerHelper
