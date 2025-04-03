@@ -18,8 +18,17 @@ jobs:
 
       - name: Install BcContainerHelper
         run: |
-          Install-PackageProvider -Name NuGet -Force
+          # Ensure PowerShellGet is updated
+          Install-Module PowerShellGet -Force -AllowClobber -Scope CurrentUser
+      
+          # Manually install the NuGet provider
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
+      
+          # Set PSGallery as trusted source
           Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+      
+          # Install BcContainerHelper
           Install-Module BcContainerHelper -Force -AllowClobber -Scope CurrentUser
           Import-Module BcContainerHelper
         shell: pwsh
