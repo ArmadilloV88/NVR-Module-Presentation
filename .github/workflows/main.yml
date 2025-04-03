@@ -16,43 +16,28 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Business Central
+      - name: Setup Business Central Container
         run: |
-          $BCInstaller = "https://your-download-link.com/BusinessCentralInstaller.exe"
-          $BCInstallerPath = "$env:GITHUB_WORKSPACE\BCInstaller.exe"
-
-          Write-Host "Downloading Business Central Installer..."
-          Invoke-WebRequest -Uri $BCInstaller -OutFile $BCInstallerPath
-
-          Write-Host "Installing Business Central..."
-          Start-Process -FilePath $BCInstallerPath -ArgumentList "/quiet /norestart" -Wait
+          Import-Module BcContainerHelper
+          $securePassword = ConvertTo-SecureString "YourSecurePassword" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential ("bcadmin", $securePassword)
+          
+          New-BcContainer `
+            -accept_eula `
+            -containerName "BCContainer" `
+            -imageName "mcr.microsoft.com/businesscentral/sandbox" `
+            -auth UserPassword `
+            -updateHosts `
+            -credential $credential `
+            -licenseFile $null  # Set licenseFile to null if you don't have one
         shell: pwsh
 
-      - name: Verify AL Compiler
+      - name: Compile AL Project inside BC Container
         run: |
-          $ALCompilerPath = "C:\Program Files (x86)\Microsoft Dynamics 365 Business Central\190\AL Development Environment\alc.exe"
-          if (!(Test-Path $ALCompilerPath)) {
-            Write-Error "AL Compiler (alc.exe) not found! Installation might have failed."
-            exit 1
-          } else {
-            Write-Host "AL Compiler found at $ALCompilerPath"
-          }
-        shell: pwsh
-
-      - name: Compile AL Project
-        run: |
-          $ALCompilerPath = "C:\Program Files (x86)\Microsoft Dynamics 365 Business Central\190\AL Development Environment\alc.exe"
-          $AppSource = "$env:GITHUB_WORKSPACE\src\app.json"
-          $AppOutput = "$env:GITHUB_WORKSPACE\Output.app"
-
-          & $ALCompilerPath /project:$env:GITHUB_WORKSPACE /packagecachepath:$env:GITHUB_WORKSPACE\.alpackages /out:$AppOutput
-
-          if (!(Test-Path $AppOutput)) {
-            Write-Error "Compilation failed! Output.app was not generated."
-            exit 1
-          } else {
-            Write-Host "Compilation successful. Output.app created at $AppOutput"
-          }
+          Import-Module BcContainerHelper
+          Run-ALCInBcContainer -containerName "BCContainer" `
+            -alProjectFolder "$env:GITHUB_WORKSPACE\src" `
+            -appFilePath "$env:GITHUB_WORKSPACE\Output.app"
         shell: pwsh
 
       - name: Upload Build Artifact
@@ -80,7 +65,7 @@ jobs:
           $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
           $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
 
-          Invoke-BCAppTests -tenant "default" -credential $credential -serverInstance "BCServerInstance" -testSuite "Default"
+          Invoke-BCAppTests -containerName "BCContainer" -credential $credential -testSuite "Default"
         shell: pwsh
 
   deploy:
@@ -102,5 +87,5 @@ jobs:
           $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
           $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
 
-          Publish-BCApp -tenant "default" -credential $credential -serverInstance "BCServerInstance" -appFile "Output.app"
+          Publish-BCApp -containerName "BCContainer" -credential $credential -appFilePath "business-central-app/Output.app"
         shell: pwsh
