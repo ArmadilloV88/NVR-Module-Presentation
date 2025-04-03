@@ -21,15 +21,24 @@ jobs:
           # Ensure PowerShellGet is updated
           Install-Module PowerShellGet -Force -AllowClobber -Scope CurrentUser
       
-          # Manually install the NuGet provider
+          # Ensure TLS 1.2 is used for secure connections
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      
+          # Check if PSGallery repository is registered and trusted
+          $repository = Get-PSRepository -Name 'PSGallery' -ErrorAction SilentlyContinue
+          if ($repository -eq $null) {
+              Register-PSRepository -Default
+          } else {
+              Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+          }
+      
+          # Install NuGet package provider if not installed
           Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
       
-          # Set PSGallery as trusted source
-          Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-      
-          # Install BcContainerHelper
+          # Install BcContainerHelper module
           Install-Module BcContainerHelper -Force -AllowClobber -Scope CurrentUser
+      
+          # Import BcContainerHelper module
           Import-Module BcContainerHelper
         shell: pwsh
 
