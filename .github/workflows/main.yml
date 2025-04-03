@@ -1,0 +1,112 @@
+name: Business Central AL CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Cache Business Central Artifact based on the version
+      - name: Cache Business Central Artifact
+        uses: actions/cache@v4
+        with:
+          path: C:\bc-cache
+          key: bc-artifact-${{ runner.os }}-w1-${{ hashFiles('**/app.json') }}
+          restore-keys: |
+            bc-artifact-${{ runner.os }}-w1-
+            bc-artifact-${{ runner.os }}-w1
+          save-always: false
+          fail-on-cache-miss: false
+
+      - name: Install BcContainerHelper
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          Install-Module BcContainerHelper -Force -AllowClobber
+        shell: pwsh
+
+      - name: Setup Business Central Development Environment
+        run: |
+          Import-Module BcContainerHelper
+          $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
+          
+          # Get latest artifact URL for Business Central
+          $artifactUrl = Get-BcArtifactUrl -country "w1" -type "sandbox"
+      
+          # Create Business Central container using artifacts
+          New-BcContainer -accept_eula -containerName "BCContainer" -auth NavUserPassword -Credential $credential `
+          -artifactUrl $artifactUrl -publicDnsName "CVRDev.dev.navertica.com" `
+          -updateHosts
+        shell: pwsh
+
+      - name: Wait for Container to be ready
+        run: |
+          Start-Sleep -Seconds 15
+        shell: pwsh
+
+      - name: Verify BcContainerHelper Cmdlets
+        run: |
+          Import-Module BcContainerHelper
+          # Filter commands related to 'Compile' to reduce noise
+          Get-Command -Module BcContainerHelper | Where-Object { $_.Name -like "*Compile*" }
+        shell: pwsh
+
+      - name: Compile AL Project
+        run: |
+          Import-Module BcContainerHelper
+          Compile-BcContainerApp -containerName "Compile-AppInBcContainer" -appProjectFolder "$env:GITHUB_WORKSPACE" -appOutputFile "Output.app"
+        shell: pwsh
+
+      #- name: Upload Build Artifact
+        #uses: actions/upload-artifact@v4
+        #with:
+          #name: business-central-app
+          #path: Output.app
+
+  test:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      #- name: Download Build Artifact
+        #uses: actions/download-artifact@v4
+        #with:
+          #name: business-central-app
+          #path: .
+
+      #- name: Run Business Central Tests
+        #run: |
+          #Import-Module BcContainerHelper
+          #Invoke-BcContainerTest -containerName "BCContainer" -testSuite "Default"
+        #shell: pwsh
+
+  deploy:
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      #- name: Download Build Artifact
+        #uses: actions/download-artifact@v4
+        #with:
+          #name: business-central-app
+          #path: .
+
+      #- name: Deploy to Business Central Sandbox
+        #run: |
+          #Import-Module BcContainerHelper
+          #Publish-BcContainerApp -containerName "BCContainer" -appFile "Output.app"
+        #shell: pwsh
