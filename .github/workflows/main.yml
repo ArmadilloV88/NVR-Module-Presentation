@@ -69,7 +69,7 @@ jobs:
           # Check if the project folder exists inside the container
           if (Test-Path $appProjectFolder) {
             Write-Host "Starting the compilation of the AL project."
-            Compile-AppInBcContainer -containerName "BCContainer" -appProjectFolder $appProjectFolder -appOutputFile "Output.app"
+            Compile-AppInBcContainer -containerName "BCContainer" -appProjectFolder $appProjectFolder
           } else {
             Write-Error "AL Project folder does not exist: $appProjectFolder"
           }
