@@ -16,9 +16,27 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install AL Compiler
+      - name: Install Business Central
         run: |
-          Write-Host "Using AL Compiler from Business Central Development Environment"
+          $BCInstaller = "https://your-download-link.com/BusinessCentralInstaller.exe"
+          $BCInstallerPath = "$env:GITHUB_WORKSPACE\BCInstaller.exe"
+
+          Write-Host "Downloading Business Central Installer..."
+          Invoke-WebRequest -Uri $BCInstaller -OutFile $BCInstallerPath
+
+          Write-Host "Installing Business Central..."
+          Start-Process -FilePath $BCInstallerPath -ArgumentList "/quiet /norestart" -Wait
+        shell: pwsh
+
+      - name: Verify AL Compiler
+        run: |
+          $ALCompilerPath = "C:\Program Files (x86)\Microsoft Dynamics 365 Business Central\190\AL Development Environment\alc.exe"
+          if (!(Test-Path $ALCompilerPath)) {
+            Write-Error "AL Compiler (alc.exe) not found! Installation might have failed."
+            exit 1
+          } else {
+            Write-Host "AL Compiler found at $ALCompilerPath"
+          }
         shell: pwsh
 
       - name: Compile AL Project
@@ -26,11 +44,6 @@ jobs:
           $ALCompilerPath = "C:\Program Files (x86)\Microsoft Dynamics 365 Business Central\190\AL Development Environment\alc.exe"
           $AppSource = "$env:GITHUB_WORKSPACE\src\app.json"
           $AppOutput = "$env:GITHUB_WORKSPACE\Output.app"
-
-          if (!(Test-Path $ALCompilerPath)) {
-            Write-Error "AL Compiler (alc.exe) not found at expected location: $ALCompilerPath"
-            exit 1
-          }
 
           & $ALCompilerPath /project:$env:GITHUB_WORKSPACE /packagecachepath:$env:GITHUB_WORKSPACE\.alpackages /out:$AppOutput
 
@@ -64,7 +77,10 @@ jobs:
       - name: Run Business Central Tests
         run: |
           Import-Module BcContainerHelper
-          Invoke-BCAppTests -tenant "default" -userName "${{ secrets.BC_USERNAME }}" -password (ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force) -serverInstance "BCServerInstance" -testSuite "Default"
+          $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
+
+          Invoke-BCAppTests -tenant "default" -credential $credential -serverInstance "BCServerInstance" -testSuite "Default"
         shell: pwsh
 
   deploy:
@@ -83,5 +99,8 @@ jobs:
       - name: Deploy to Business Central
         run: |
           Import-Module BcContainerHelper
-          Publish-BCApp -tenant "default" -userName "${{ secrets.BC_USERNAME }}" -password (ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force) -serverInstance "BCServerInstance" -appFile "Output.app"
+          $securePassword = ConvertTo-SecureString "${{ secrets.BC_PASSWORD }}" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.BC_USERNAME }}", $securePassword)
+
+          Publish-BCApp -tenant "default" -credential $credential -serverInstance "BCServerInstance" -appFile "Output.app"
         shell: pwsh
