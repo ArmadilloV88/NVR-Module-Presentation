@@ -14,16 +14,20 @@ table 50100 "NVR Customers"
             NotBlank = true;
             Editable = false;
         }
-        //require Defencive coding (Cannot have numbers in it)
+        
         field(501002;Name; Text[100])
         {
             Caption = 'Customer Name';
             DataClassification = CustomerContent;
             TableRelation = Customer.Name;
             NotBlank = true;
-            Editable = true;
+            Editable = false;
+            trigger OnValidate()
+            begin
+                //require Defencive coding (Cannot have numbers in it), also ensure that the name is pulled from the base application customer table
+            end;
         }
-        //require Defencive coding (Must follow the email structure, use RegEx for that)
+        
         field(501003;Email; Text[100])
         {
             Caption = 'Customer Email';
@@ -32,16 +36,21 @@ table 50100 "NVR Customers"
             Editable = true;
             trigger OnValidate()
             begin
-
+                //require Defencive coding (Must follow the email structure, use RegEx for that)
             end;
         }
-        //require Defencive coding (Must follow the phone structure, use RegEx for that)
+        
         field(501004;Phone; Text[100])
         {
             Caption = 'Customer Phone';
             DataClassification = CustomerContent;
             NotBlank = true;
             Editable = true;
+            TableRelation = Customer."Phone No.";
+            trigger OnValidate()
+            begin
+                //require Defencive coding (Must follow the phone structure, use RegEx for that)
+            end;
         }
         field(501005;"Billing Address"; Text[100])
         {
@@ -49,12 +58,13 @@ table 50100 "NVR Customers"
             DataClassification = CustomerContent;
             NotBlank = true;
             Editable = true;
+            TableRelation = Customer.Address;
         }
         field(501006;"Shipping Address"; Text[100])
         {
             Caption = 'Customer Billing Address';
             DataClassification = CustomerContent;
-            NotBlank = true;
+            NotBlank = false;
             Editable = true;
         }
         field(501007;"Payment Terms"; Enum "NVR PaymentTermsEnum")
@@ -62,7 +72,7 @@ table 50100 "NVR Customers"
             InitValue = 21; // Unknown
             Caption = 'Payment Terms';
             DataClassification = CustomerContent;
-            NotBlank = true;
+            NotBlank = false;
             Editable = true;
         }
     }
