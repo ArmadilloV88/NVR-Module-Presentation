@@ -1,4 +1,4 @@
-table 50101 "Sales Orders"
+table 50101 "NVR Sales Orders"
 {
     DataClassification = ToBeClassified;
     Caption = 'Sales Orders', MaxLength = 30;

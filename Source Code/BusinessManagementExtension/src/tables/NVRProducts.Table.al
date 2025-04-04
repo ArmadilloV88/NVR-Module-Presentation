@@ -1,76 +1,66 @@
-table 50102 "NVR Invoices"
+table 50105 "NVR Products"
 {
     DataClassification = CustomerContent;
-    Caption = 'Invoices', MaxLength = 30;
-    TableType = Normal;
     
     fields
     {
-        field(501021;InvoiceID;Code[20])
+        field(501051;ProductID; Code[20])
         {
             DataClassification = CustomerContent;
-            Caption = 'Invoice ID';
+            Caption = 'Product ID';
             NotBlank = true;
             Editable = false;
         }
-        field(501022;SalesOrderID;Code[20])
+        field(501052;ProductName; Text[100])
         {
             DataClassification = CustomerContent;
-            Caption = 'Sales Order ID';
-            NotBlank = true;
-            Editable = false;
-            TableRelation = "NVR Sales Orders".SalesOrderID;
-        }
-        field(501023;InvoiceDate;Date)
-        {
-            DataClassification = CustomerContent;
-            Caption = 'Invoice Date';
+            Caption = 'Product Name';
             NotBlank = true;
             Editable = false;
         }
-        field(501024;DueDate;Date)
+        field(501053;CategoryID; Code[20])
         {
             DataClassification = CustomerContent;
-            Caption = 'Due Date';
+            Caption = 'Category ID';
+            NotBlank = true;
+            Editable = false;
+            TableRelation = "NVR Product Categories".CategoryID;
+        }
+        field(501054;UnitPrice; Decimal)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Unit Price';
             NotBlank = true;
             Editable = false;
         }
-        field(501025;AmountDue;Decimal)
+        field(501055;StockQuantity; Integer)
         {
             DataClassification = CustomerContent;
-            Caption = 'Amount Due';
+            Caption = 'Stock Quantity';
             NotBlank = true;
             Editable = false;
         }
-        field(501026;Currency;Code[10])
+        field(501056;Description; Text[250])
         {
             DataClassification = CustomerContent;
-            Caption = 'Currency';
-            NotBlank = true;
-            Editable = false;
-            TableRelation = Currency.Code;
-        }
-        field(501027;Status;Enum "NVR PaymentStatusEnum")
-        {
-            InitValue = 0; // Unpaid
-            DataClassification = CustomerContent;
-            Caption = 'Payment Status';
+            Caption = 'Description';
             NotBlank = true;
             Editable = false;
         }
     }
+    
     keys
     {
-        key(PK; InvoiceID)
+        key(PK; ProductID)
         {
             Clustered = true;
         }
-        key(FK1;SalesOrderID)
+        key(FK1;CategoryID)
         {
             Clustered = false;
         }
     }
-    //Might be used later for defencive programming
+
     trigger OnInsert()
     begin
         
@@ -90,4 +80,5 @@ table 50102 "NVR Invoices"
     begin
         
     end;
+    
 }
