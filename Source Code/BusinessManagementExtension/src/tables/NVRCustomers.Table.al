@@ -14,41 +14,48 @@ table 50100 "NVR Customers"
             NotBlank = true;
             Editable = false;
         }
+        //require Defencive coding (Cannot have numbers in it)
         field(501002;Name; Text[100])
         {
             Caption = 'Customer Name';
             DataClassification = CustomerContent;
             TableRelation = Customer.Name;
             NotBlank = true;
-            Editable = false;
+            Editable = true;
         }
+        //require Defencive coding (Must follow the email structure, use RegEx for that)
         field(501003;Email; Text[100])
         {
             Caption = 'Customer Email';
             DataClassification = CustomerContent;
             NotBlank = true;
-            Editable = false;
+            Editable = true;
+            trigger OnValidate()
+            begin
+
+            end;
         }
+        //require Defencive coding (Must follow the phone structure, use RegEx for that)
         field(501004;Phone; Text[100])
         {
             Caption = 'Customer Phone';
             DataClassification = CustomerContent;
             NotBlank = true;
-            Editable = false;
+            Editable = true;
         }
         field(501005;"Billing Address"; Text[100])
         {
             Caption = 'Customer Billing Address';
             DataClassification = CustomerContent;
             NotBlank = true;
-            Editable = false;
+            Editable = true;
         }
         field(501006;"Shipping Address"; Text[100])
         {
             Caption = 'Customer Billing Address';
             DataClassification = CustomerContent;
             NotBlank = true;
-            Editable = false;
+            Editable = true;
         }
         field(501007;"Payment Terms"; Enum "NVR PaymentTermsEnum")
         {
@@ -56,7 +63,7 @@ table 50100 "NVR Customers"
             Caption = 'Payment Terms';
             DataClassification = CustomerContent;
             NotBlank = true;
-            Editable = false;
+            Editable = true;
         }
     }
     

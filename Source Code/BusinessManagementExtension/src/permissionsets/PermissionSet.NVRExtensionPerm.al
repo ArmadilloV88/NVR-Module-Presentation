@@ -8,5 +8,13 @@ permissionset 50110 "NVR Extension Perm."
         table "NVR Customers" = X,
         tabledata "NVR Customers" = RMID,
         table "NVR Invoices" = X,
-        tabledata "NVR Invoices" = RMID;
+        tabledata "NVR Invoices" = RMID,
+        Table "NVR Products" = X,
+        tabledata "NVR Products" = RMID,
+        table "NVR Sales Order Line" = X,
+        tabledata "NVR Sales Order Line" = RMID,
+        table "NVR Product Categories" = X,
+        tabledata "NVR Product Categories" = RMID,
+        table "NVR payments" = X,
+        tabledata "NVR payments" = RMID;
 }
