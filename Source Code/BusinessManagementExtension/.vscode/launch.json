@@ -10,8 +10,8 @@
         "server": "https://CVRDev.dev.navertica.com",
         "serverInstance": "BC",
         "authentication": "AAD",
-        "startupObjectId": 22, //22 is the main page
-        "startupObjectType": "Page",
+        "startupObjectId": 50100, //22 is the main page
+        "startupObjectType": "Table",
         "breakOnError": true,
         "launchBrowser": true,
         "enableLongRunningSqlStatements": true,

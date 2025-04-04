@@ -1,4 +1,4 @@
-enum 50102 NVRPaymentStatusEnum
+enum 50101 NVRPaymentStatusEnum
 {
     Extensible = false;
     value(0; NotPaid)

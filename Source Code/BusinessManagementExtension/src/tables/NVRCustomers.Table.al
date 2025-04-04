@@ -1,4 +1,4 @@
-table 50100 "Customers"
+table 50100 "NVR Customers"
 {
     TableType = Normal;
     DataClassification = CustomerContent;
@@ -22,24 +22,38 @@ table 50100 "Customers"
             NotBlank = true;
             Editable = false;
         }
-        field(501003;OrderDate; Date)
+        field(501003;Email; Text[100])
         {
-            Caption = 'Order Date';
+            Caption = 'Customer Email';
             DataClassification = CustomerContent;
             NotBlank = true;
             Editable = false;
         }
-        field(501004;TotalAmount; Decimal)
+        field(501004;Phone; Text[100])
         {
-            Caption = 'Order Amount';
+            Caption = 'Customer Phone';
             DataClassification = CustomerContent;
             NotBlank = true;
             Editable = false;
         }
-        field(501005;Status; Enum "NVRPaymentStatusEnum")
+        field(501005;"Billing Address"; Text[100])
         {
-            InitValue = 9; // Unknown
-            Caption = 'Payment Status';
+            Caption = 'Customer Billing Address';
+            DataClassification = CustomerContent;
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501006;"Shipping Address"; Text[100])
+        {
+            Caption = 'Customer Billing Address';
+            DataClassification = CustomerContent;
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501007;"Payment Terms"; Enum "NVRPaymentStatusEnum")
+        {
+            InitValue = 21; // Unknown
+            Caption = 'Payment Terms';
             DataClassification = CustomerContent;
             NotBlank = true;
             Editable = false;
