@@ -26,7 +26,14 @@ table 50101 "Sales Orders"
             NotBlank = true;
             Editable = false;
         }
-        field(501014; "Payment Status"; Enum "NVRPaymentStatusEnum"){}
+        field(501014; "Payment Status"; Enum "NVR PaymentStatusEnum")
+        {
+            InitValue = 0; // Not Paid
+            DataClassification = ToBeClassified;
+            Caption = 'Payment Status';
+            NotBlank = true;
+            Editable = false;
+        }
 
         field(501015;TotalAmount; Decimal)
         {
@@ -34,6 +41,14 @@ table 50101 "Sales Orders"
             Caption = 'Total Amount';
             NotBlank = true;
             Editable = false;
+        }
+        field(501016;Currency; Code[10])
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Currency';
+            NotBlank = true;
+            Editable = false;
+            TableRelation = Currency.Code;
         }
 
     }
@@ -48,16 +63,12 @@ table 50101 "Sales Orders"
         {
             Clustered = false;
         }
+        key(FK2;Currency)
+        {
+            Clustered = false;
+        }
     }
-    
-    fieldgroups
-    {
-        // Add changes to field groups here
-    }
-    
-    var
-        myInt: Integer;
-    
+    //might be used later for defencive programming
     trigger OnInsert()
     begin
         

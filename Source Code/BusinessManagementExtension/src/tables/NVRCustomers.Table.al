@@ -67,4 +67,25 @@ table 50100 "NVR Customers"
             Clustered = true;
         }
     }
+
+    //might be used later for defencive programming
+    trigger OnInsert()
+    begin
+        
+    end;
+    
+    trigger OnModify()
+    begin
+        
+    end;
+    
+    trigger OnDelete()
+    begin
+        
+    end;
+    
+    trigger OnRename()
+    begin
+        
+    end;
 }
