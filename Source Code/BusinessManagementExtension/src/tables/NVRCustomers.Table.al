@@ -38,6 +38,7 @@ table 50100 "Customers"
         }
         field(501005;Status; Enum "NVRPaymentStatusEnum")
         {
+            InitValue = 9; // Unknown
             Caption = 'Payment Status';
             DataClassification = CustomerContent;
             NotBlank = true;
