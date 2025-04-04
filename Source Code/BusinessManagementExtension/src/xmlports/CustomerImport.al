@@ -1,12 +1,12 @@
-xmlport 50100 "Customer Import"
+/*xmlport 50100 "Customer Import"
 {
     format = Xml;
 
     element(Customer)
  {
- field("Customer ID"; "Customer ID")
- field("Loyalty Points"; "Loyalty Points")
- field("Preferred Contact Method"; "Preferred Contact Method")
+ field("Customer ID"; "Customer ID");
+ field("Loyalty Points"; "Loyalty Points");
+ field("Preferred Contact Method"; "Preferred Contact Method");
  }
  
  procedure ImportCustomerData()
@@ -17,3 +17,4 @@ xmlport 50100 "Customer Import"
  // Logic for processing XML and importing customer data
  end;
 }
+*/

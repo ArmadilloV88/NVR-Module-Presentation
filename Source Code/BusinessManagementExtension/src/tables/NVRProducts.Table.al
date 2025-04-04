@@ -1,7 +1,9 @@
 table 50105 "NVR Products"
 {
+    Caption = 'Products';
     DataClassification = CustomerContent;
-    
+    TableType = Normal;
+
     fields
     {
         

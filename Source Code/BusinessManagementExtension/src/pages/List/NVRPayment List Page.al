@@ -1,31 +1,43 @@
-page 50105 "Payment List"
+page 50103 "NVR Payment List"
 {
+    Caption = 'Payment List';
     PageType = List;
-    SourceTable = "Payment";
+    SourceTable = "NVR Payments";
 
     layout
     {
         area(content)
         {
-            repeater(Group)
+            repeater(Payments)
             {
-                field("Payment ID"; "Payment ID")
+                field("NVR Payment ID"; Rec.PaymentID)
                 {
+                    Caption = 'Payment ID';
+                    Editable = false;
                     ApplicationArea = All;
                 }
-
-                field("Invoice ID"; "Invoice ID")
+                field("NVR Invoice ID"; Rec.InvoiceID)
                 {
+                    Caption = 'Invoice ID';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Payment Date"; rec."Payment Date")
+                {
+                    Caption = 'Payment Date';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Payment Method"; Rec.PaymentMethod)
+                {
+                    Caption = 'Payment Method';
+                    Editable = false;
                     ApplicationArea = All;
                 }
-
-                field("Payment Date"; "Payment Date")
+                field("NVR Payment Amount"; Rec.PaymentAmount)
                 {
-                    ApplicationArea = All;
-                }
-
-                field("Amount"; "Amount")
-                {
+                    Caption = 'Payment Amount';
+                    Editable = false;
                     ApplicationArea = All;
                 }
             }
@@ -41,7 +53,7 @@ page 50105 "Payment List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Pages."Payment Card");
+                    Page.RunModal(Page::"NVR Payment Card", Rec);
                 end;
             }
         }

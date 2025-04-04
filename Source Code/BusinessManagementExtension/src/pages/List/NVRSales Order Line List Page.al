@@ -1,42 +1,56 @@
-page 50110 "Sales Order Line List"
+page 50104 "NVR Sales Order Line List"
 {
+    Caption = 'Sales Order Line List';
     PageType = List;
-    SourceTable = "Sales Order Line";
+    SourceTable = "NVR Sales Order Line";
 
     layout
     {
         area(content)
         {
-            repeater(Group)
+            repeater(SalesOrderLines)
             {
-                field("Sales Order ID"; "Sales Order ID")
+                field("NVR Sales Order Line ID"; Rec."Sales Order Line ID")
                 {
+                    Caption = 'Sales Order Line ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Line ID"; "Line ID")
+                field("NVR Sales Order ID"; Rec.SalesOrderID)
                 {
+                    Caption = 'Sales Order ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Product ID"; "Product ID")
+                field("NVR Product ID"; Rec.ProductID)
                 {
+                    Caption = 'Product ID';
                     ApplicationArea = All;
+                    Editable = false;
+                    //we need to show a list of products in the Sales order line
                 }
 
-                field("Quantity"; "Quantity")
+                field("NVR Quantity"; Rec.Quantity)
                 {
+                    Caption = 'Quantity';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Unit Price"; "Unit Price")
+                field("NVR Unit Price"; Rec.Unitprice)
                 {
+                    Caption = 'Unit Price';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Line Amount"; "Line Amount")
+                field("NVR Line Amount"; Rec."Line Amount")
                 {
+                    Caption = 'Total Line Amount';
                     ApplicationArea = All;
+                    Editable = false;
                 }
             }
         }
@@ -51,7 +65,7 @@ page 50110 "Sales Order Line List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Pages."Sales Order Line Card");
+                    Page.RunModal(Page::"NVR Sales Order Line Card", Rec);
                 end;
             }
         }

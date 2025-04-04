@@ -1,4 +1,4 @@
-codeunit 50100 "Customer Handler"
+/*codeunit 50100 "Customer Handler"
 {
     procedure UpdateCustomerLoyaltyPoints(CustomerID: Code[20]; Points: Integer)
     var
@@ -10,3 +10,4 @@ codeunit 50100 "Customer Handler"
         end;
     end;
 }
+*/

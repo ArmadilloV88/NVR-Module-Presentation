@@ -1,7 +1,7 @@
-page 50109 "Sales Order Card"
+page 50111 "NVR Sales Order Card"
 {
     PageType = Card;
-    SourceTable = "Sales Order";
+    SourceTable = "NVR Sales Orders";
 
     layout
     {
@@ -9,30 +9,57 @@ page 50109 "Sales Order Card"
         {
             group(Group)
             {
-                field("Sales Order ID"; "Sales Order ID")
+                field("NVR Sales Order ID"; Rec.SalesOrderID)
                 {
+                    Caption = 'Sales Order ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Customer ID"; "Customer ID")
+                field("NVR Customer ID"; rec.CustomerID)
                 {
+                    Caption = 'Customer ID';
                     ApplicationArea = All;
+                    Editable = true;
+                    TableRelation = "NVR Customers".CustomerID;
                 }
 
-                field("Order Date"; "Order Date")
+                field("NVR Order Date"; Rec.OrderDate)
                 {
+                    Caption = 'Order Date';
                     ApplicationArea = All;
+                    Editable = true;
+                    trigger OnValidate()
+                    begin
+                        //check if the date is the correct format
+                    end;
                 }
 
-                field("Amount"; "Amount")
+                field("NVR Total Amount"; Rec.TotalAmount)
                 {
+                    Caption = 'Total Amount';
                     ApplicationArea = All;
+                    Editable = true;
+                    DecimalPlaces = 2;
                 }
 
-                field("Status"; "Status")
+                field("NVR Payment Status"; rec."Payment Status")
                 {
+                    Caption = 'Payment Status';
                     ApplicationArea = All;
+                    Editable = true;
+                    //need to ensure it shows the caption of the enum, similiar to a drop down list
                 }
+
+                field("NVR Currency"; Rec.Currency)
+                {
+                    Caption = 'Currency';
+                    ApplicationArea = All;
+                    Editable = false;
+                    TableRelation = Currency.Code;
+                    //ensure that it shows the currency symbol or suffix example : ZAR
+                }
+
             }
         }
     }
@@ -46,6 +73,10 @@ page 50109 "Sales Order Card"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
+                    // Code to save the sales order details
+                    // This will typically involve calling the table's Insert or Modify method
+                    // and possibly validating the data before saving.
+                    Rec.Modify(true);
                     Message('Sales Order saved successfully!');
                 end;
             }

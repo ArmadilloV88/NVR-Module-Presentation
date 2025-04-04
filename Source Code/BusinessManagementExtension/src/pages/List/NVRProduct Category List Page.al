@@ -1,5 +1,6 @@
-page 50106 "Product Category List"
+page 50106 "NVR Product Category List"
 {
+    Caption = 'Product Categories List';
     PageType = List;
     SourceTable = "NVR Product Categories";
 
@@ -7,21 +8,27 @@ page 50106 "Product Category List"
     {
         area(content)
         {
-            repeater(Group)
+            repeater(Categories)
             {
-                field("CategoryID"; "CategoryID")
+                field("NVR CategoryID"; Rec.CategoryID)
                 {
+                    Caption = 'Category ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("CategoryName"; "CategoryName")
+                field("NVR CategoryName"; Rec.CategoryName)
                 {
+                    Caption = 'Category Name';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Description"; "Description")
+                field("NVR Description"; rec.Description)
                 {
+                    Caption = 'Description';
                     ApplicationArea = All;
+                    Editable = false;
                 }
             }
         }
@@ -36,7 +43,7 @@ page 50106 "Product Category List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Pages."Product Category Card");
+                    Page.RunModal(Page::"NVR Product Category Card", Rec);
                 end;
             }
         }

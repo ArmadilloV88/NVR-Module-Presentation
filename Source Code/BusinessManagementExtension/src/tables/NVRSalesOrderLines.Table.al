@@ -71,6 +71,18 @@ table 50104 "NVR Sales Order Line"
             NotBlank = true;
             Editable = false;
         }
+        field(501046;"Line Amount"; Decimal)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Line Amount';
+            NotBlank = true;
+            Editable = false;
+            trigger OnValidate()
+            begin
+                //This is calculated based on the quantity and unit price
+                "Line Amount" := Quantity * Unitprice;
+            end;
+        }
     }
     
     keys

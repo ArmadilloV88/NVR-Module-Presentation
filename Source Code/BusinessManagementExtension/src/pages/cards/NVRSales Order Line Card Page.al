@@ -1,37 +1,57 @@
-page 50111 "Sales Order Line Card"
+page 50114 "NVR Sales Order Line Card"
 {
+    //we might need to do this page differently as we need to show a list of products in the Sales order line
+    Caption = 'Sales Order Line Card';
     PageType = Card;
-    SourceTable = "Sales Order Line";
+    SourceTable = "NVR Sales Order Line";
 
     layout
     {
         area(content)
         {
-            group(Group)
+            group(SalesOrderLine)
             {
-                field("Sales Order ID"; "Sales Order ID")
+                field("NVR Sales Order Line ID"; Rec."Sales Order Line ID")
                 {
+                    Caption = 'Sales Order Line ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Product ID"; "Product ID")
+                field("NVR Sales Order ID"; Rec.SalesOrderID)
                 {
+                    Caption = 'Sales Order ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Quantity"; "Quantity")
+                field("NVR Product ID"; Rec.ProductID)
                 {
+                    Caption = 'Product ID';
                     ApplicationArea = All;
+                    Editable = false;
+                    //we need to show a list of products in the Sales order line
                 }
 
-                field("Unit Price"; "Unit Price")
+                field("NVR Quantity"; Rec.Quantity)
                 {
+                    Caption = 'Quantity';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Line Amount"; "Line Amount")
+                field("NVR Unit Price"; Rec.Unitprice)
                 {
+                    Caption = 'Unit Price';
                     ApplicationArea = All;
+                    Editable = false;
+                }
+
+                field("NVR Line Amount"; Rec."Line Amount")
+                {
+                    Caption = 'Total Line Amount';
+                    ApplicationArea = All;
+                    Editable = false;
                 }
             }
         }

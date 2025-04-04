@@ -1,38 +1,62 @@
-page 50108 "Sales Order List"
+page 50108 "NVR Sales Order List"
 {
+    Caption = 'Sales Orders';
     PageType = List;
-    SourceTable = "Sales Order";
+    SourceTable = "NVR Sales Orders";
 
     layout
     {
         area(content)
         {
-            repeater(Group)
+            repeater(SalesOrders)
             {
-                field("Sales Order ID"; "Sales Order ID")
+                field("NVR Sales Order ID"; Rec.SalesOrderID)
                 {
+                    Caption = 'Sales Order ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Customer ID"; "Customer ID")
+                field("NVR Customer ID"; rec.CustomerID)
                 {
+                    Caption = 'Customer ID';
                     ApplicationArea = All;
+                    Editable = false;
+                    TableRelation = "NVR Customers".CustomerID;
                 }
 
-                field("Order Date"; "Order Date")
+                field("NVR Order Date"; Rec.OrderDate)
                 {
+                    Caption = 'Order Date';
                     ApplicationArea = All;
+                    Editable = false;
                 }
 
-                field("Amount"; "Amount")
+                field("NVR Total Amount"; Rec.TotalAmount)
                 {
+                    Caption = 'Total Amount';
                     ApplicationArea = All;
+                    Editable = false;
+                    DecimalPlaces = 2;
                 }
 
-                field("Status"; "Status")
+                field("NVR Payment Status"; rec."Payment Status")
                 {
+                    Caption = 'Payment Status';
                     ApplicationArea = All;
+                    Editable = false;
+                    //need to ensure it shows the caption of the enum
                 }
+
+                field("NVR Currency"; Rec.Currency)
+                {
+                    Caption = 'Currency';
+                    ApplicationArea = All;
+                    Editable = false;
+                    TableRelation = Currency.Code;
+                    //ensure that it shows the currency symbol or suffix example : ZAR
+                }
+
             }
         }
     }
@@ -46,7 +70,7 @@ page 50108 "Sales Order List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Pages."Sales Order Card");
+                    Page.RunModal(Page::"NVR Sales Order Card", Rec);
                 end;
             }
         }

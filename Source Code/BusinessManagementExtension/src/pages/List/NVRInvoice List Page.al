@@ -1,32 +1,56 @@
-page 50104 "Invoice List"
+page 50102 "NVR Invoice List"
 {
+    Caption = 'Invoice List';
     PageType = List;
-    SourceTable = "Invoice";
+    SourceTable = "NVR Invoices";
 
     layout
     {
         area(content)
         {
-            repeater(Group)
+            repeater(Invoices)
             {
-                field("Invoice ID"; "Invoice ID")
+                field("NVR Invoice ID"; Rec.InvoiceID)
                 {
+                    Caption = 'Invoice ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
-
-                field("Sales Order ID"; "Sales Order ID")
+                field("NVR Sales Order ID"; Rec.SalesOrderID)
                 {
+                    Caption = 'Sales Order ID';
                     ApplicationArea = All;
+                    Editable = false;
                 }
-
-                field("Invoice Date"; "Invoice Date")
+                field("NVR Invoice Date"; Rec.InvoiceDate)
                 {
+                    Caption = 'Invoice Date';
                     ApplicationArea = All;
+                    Editable = false;
                 }
-
-                field("Amount"; "Amount")
+                field("NVR Due Date"; Rec.DueDate)
                 {
+                    Caption = 'Due Date';
                     ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Amount Due"; Rec.AmountDue)
+                {
+                    Caption = 'Amount Due';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Currency"; Rec.Currency)
+                {
+                    Caption = 'Currency';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Status"; Rec.Status)
+                {
+                    Caption = 'Status';
+                    ApplicationArea = All;
+                    Editable = false;
                 }
             }
         }
@@ -41,7 +65,7 @@ page 50104 "Invoice List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Pages."Invoice Card");
+                    Page.RunModal(Page::"NVR Customer Card", Rec);
                 end;
             }
         }

@@ -3,6 +3,7 @@ table 50100 "NVR Customers"
     TableType = Normal;
     DataClassification = CustomerContent;
     Caption = 'Customers';
+    DrillDownPageId = "NVR Customer List";
     
     fields
     {
@@ -14,7 +15,6 @@ table 50100 "NVR Customers"
             NotBlank = true;
             Editable = false;
         }
-        
         field(501002;Name; Text[100])
         {
             Caption = 'Customer Name';
@@ -27,7 +27,6 @@ table 50100 "NVR Customers"
                 //require Defencive coding (Cannot have numbers in it), also ensure that the name is pulled from the base application customer table
             end;
         }
-        
         field(501003;Email; Text[100])
         {
             Caption = 'Customer Email';
@@ -39,7 +38,6 @@ table 50100 "NVR Customers"
                 //require Defencive coding (Must follow the email structure, use RegEx for that)
             end;
         }
-        
         field(501004;Phone; Text[100])
         {
             Caption = 'Customer Phone';

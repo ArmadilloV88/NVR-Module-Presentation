@@ -1,4 +1,4 @@
-query 50100 "Customer Loyalty Query"
+/*query 50100 "Customer Loyalty Query"
 {
     elements
     {
@@ -8,4 +8,4 @@ query 50100 "Customer Loyalty Query"
  field("Loyalty Points"; "Loyalty Points")
  }
  }
-}
+}*/

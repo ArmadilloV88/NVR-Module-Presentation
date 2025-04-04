@@ -1,27 +1,52 @@
-page 50101 "Product List"
+page 50105 "NVR Product List"
 {
+    Caption = 'Products List';
     PageType = List;
-    SourceTable = "Product";
+    SourceTable = "NVR Products";
 
     layout
     {
         area(content)
         {
-            repeater(Group)
+            repeater(products)
             {
-                field("Product ID"; "Product ID")
+                field("NVR Product ID"; Rec.ProductID)
                 {
+                    Caption = 'Product ID';
+                    Editable = false;
                     ApplicationArea = All;
                 }
-
-                field("Name"; "Name")
+                field("NVR Product Name"; rec.ProductName)
                 {
+                    Caption = 'Product Name';
                     ApplicationArea = All;
+                    Editable = false;
                 }
-
-                field("Category"; "Category")
+                field("NVR Category ID"; Rec.CategoryID)
                 {
+                    Caption = 'Category ID';
                     ApplicationArea = All;
+                    Editable = false;
+                    //we need to show the category name instead of the ID
+                    TableRelation = "NVR Product Categories".CategoryID;
+                }
+                field("NVR Unit Price"; Rec.UnitPrice)
+                {
+                    Caption = 'Unit Price';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Stock Quantity"; Rec.StockQuantity)
+                {
+                    Caption = 'Stock Quantity';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("NVR Description"; Rec.Description)
+                {
+                    Caption = 'Description';
+                    ApplicationArea = All;
+                    Editable = false;
                 }
             }
         }
@@ -36,7 +61,7 @@ page 50101 "Product List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Pages."Product Card");
+                    Page.RunModal(Page::"NVR Product Card", Rec);
                 end;
             }
         }

@@ -1,6 +1,6 @@
 table 50101 "NVR Sales Orders"
 {
-    DataClassification = ToBeClassified;
+    DataClassification = CustomerContent;
     Caption = 'Sales Orders', MaxLength = 30;
     TableType = Normal;
 
@@ -40,7 +40,6 @@ table 50101 "NVR Sales Orders"
             NotBlank = true;
             Editable = true;
         }
-
         field(501015;TotalAmount; Decimal)
         {
             DataClassification = ToBeClassified;
@@ -60,7 +59,6 @@ table 50101 "NVR Sales Orders"
             Editable = true;
             TableRelation = Currency.Code;
         }
-
     }
     keys
     {

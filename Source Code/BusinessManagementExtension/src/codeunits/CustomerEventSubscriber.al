@@ -1,4 +1,4 @@
-codeunit 50102 "Customer Event Subscriber"
+/*codeunit 50102 "Customer Event Subscriber"
 {
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Customer Events",
    'OnCustomerCreated', '', true, true)]
@@ -6,4 +6,4 @@ codeunit 50102 "Customer Event Subscriber"
     begin
         // Code to send a welcome email
     end;
-}
+}*/

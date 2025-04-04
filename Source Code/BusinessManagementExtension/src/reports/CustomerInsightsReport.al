@@ -1,4 +1,4 @@
-report 50100 "Customer Insights Report"
+/*report 50100 "Customer Insights Report"
 {
  DataItem("CustomerDetails"; "CustomerDetails")
  {
@@ -14,3 +14,4 @@ report 50100 "Customer Insights Report"
  // Report Layout Logic
  }
 }
+*/
