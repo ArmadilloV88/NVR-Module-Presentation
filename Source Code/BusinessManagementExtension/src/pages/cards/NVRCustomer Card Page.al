@@ -12,9 +12,24 @@ page 50110 "NVR Customer Card"
             {
                 field("Customer ID"; Rec.CustomerID)
                 {
-                    //this will need to be a drop down list of customers from the base application customer table
                     ApplicationArea = All;
                     Editable = true;
+                    TableRelation = Customer."No."; // Links to the "No." field in the base Customer table
+                    trigger OnValidate()
+                    var
+                        Customer: Record Customer;
+                    begin
+                        // Pull data from the base Customer table when a customer is selected
+                        if Customer.Get(Rec.CustomerID) then begin
+                            Rec.Name := Customer.Name;
+                            Rec.Email := 'Must be specified by the user.';
+                            Rec.Phone := 'Must be specified by the user.';
+                            Rec."Billing Address" := Customer.Address;
+                            Rec."Shipping Address" := 'Must be specified by the user.'; // Placeholder for shipping address
+                            //Rec."Payment Terms" := Customer."Payment Terms Code";
+                        end else
+                            Error('Customer not found in the base application.');
+                    end;
                 }
                 field("Name"; Rec.Name)
                 {
@@ -38,7 +53,7 @@ page 50110 "NVR Customer Card"
                 {
                     //this can be editable however as soon as the customer id is selected, the billing address should be pulled from the NVR customers table
                     ApplicationArea = All;
-                    Editable = true;
+                    Editable = false;
                 }
                 field("Shipping Address"; Rec."Shipping Address")
                 {
@@ -72,6 +87,7 @@ page 50110 "NVR Customer Card"
                     // Code to save the customer details
                     Rec.Modify(true); // Save changes to the record
                     Message('Customer saved successfully!');
+                    close;
                 end;
             }
 

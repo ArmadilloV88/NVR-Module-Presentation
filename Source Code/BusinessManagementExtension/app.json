@@ -10,7 +10,14 @@
   "help": "",
   "url": "https://www.navertica.com/en/company/",
   "logo": "res/Logo.png",
-  "dependencies": [],
+  "dependencies": [
+    {
+      "appId": "437dbf0e-84ff-417a-965d-ed2bb9650972",
+      "name": "Base Application",
+      "publisher": "Microsoft",
+      "version": "25.4.29661.29727"
+    }
+],
   "screenshots": [],
   "platform": "1.0.0.0",
   "application": "25.0.0.0",

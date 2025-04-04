@@ -67,12 +67,27 @@ page 50108 "NVR Sales Order List"
         {
             action(NewSalesOrder)
             {
+                Caption = 'New Sales Order';
+                Image = New;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Page::"NVR Sales Order Card", Rec);
+                    Page.RunModal(Page::"NVR Sales Order Card");
                 end;
             }
+            action(EditSalesOrder)
+            {
+                 Caption = 'Edit Sales Order';
+                Image = Edit;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Sales Order Card",Rec);
+                end;
+            }
+
         }
     }
 }
+
+//make a cardpart that shows the information of that sales order

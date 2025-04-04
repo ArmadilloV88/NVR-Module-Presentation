@@ -42,9 +42,9 @@ table 50100 "NVR Customers"
         {
             Caption = 'Customer Phone';
             DataClassification = CustomerContent;
-            NotBlank = true;
+            NotBlank = false;
             Editable = true;
-            TableRelation = Customer."Phone No.";
+            //TableRelation = Customer."Phone No.";
             trigger OnValidate()
             begin
                 //require Defencive coding (Must follow the phone structure, use RegEx for that)
@@ -80,6 +80,10 @@ table 50100 "NVR Customers"
         key(PK; CustomerID)
         {
             Clustered = true;
+        }
+        key(FK1; Phone)
+        {
+            Clustered = false;
         }
     }
 

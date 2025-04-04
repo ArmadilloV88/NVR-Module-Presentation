@@ -19,12 +19,14 @@ page 50100 "NVR Customer List"
                     Editable = false;
                     ApplicationArea = All;
                 }
+                
                 field("NVR Name"; Rec.Name)
                 {
                     Caption = 'Customer Name';
                     Editable = false;
                     ApplicationArea = All;
                 }
+                /*redundant as the factbox shows the customer details
                 field("NVR Email"; Rec.Email)
                 {
                     Caption = 'Email Address';
@@ -54,14 +56,23 @@ page 50100 "NVR Customer List"
                     Caption = 'Payment Terms';
                     Editable = false;
                     ApplicationArea = All;
-                }
+                }*/
+            }
+        }
+        area(FactBoxes)
+        {
+            part(CustomerInfo; "NVR Customer Info FactBox")
+            {
+                ApplicationArea = All;
+                Caption = 'Customer Info';
+                SubPageLink = "CustomerID" = FIELD(CustomerID);
             }
         }
     }
 
     actions
     {
-        area(processing)
+        area(Creation)
         {
             action(NewCustomer)
             {
@@ -70,10 +81,18 @@ page 50100 "NVR Customer List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Page::"NVR Customer Card", Rec);
+                    Page.RunModal(Page::"NVR Customer Card");
                 end;
             }
+            action(ViewSalesOrders)
+            {
+                //Need to add the page linking between customer and sales order list
+            }
+            action(ViewProducts)
+            {
+                //Need to add the page linking between customer and product list
+            }
+
         }
     }
-    //Add a card part to this segment to show customer information only, we can have in the card part an option to edit the customer where you will navigate to the customer card.
 }

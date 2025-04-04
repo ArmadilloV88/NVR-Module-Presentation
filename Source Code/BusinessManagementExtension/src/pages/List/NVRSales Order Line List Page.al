@@ -65,7 +65,7 @@ page 50104 "NVR Sales Order Line List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Page::"NVR Sales Order Line Card", Rec);
+                    Page.RunModal(Page::"NVR Sales Order Line Card");
                 end;
             }
         }

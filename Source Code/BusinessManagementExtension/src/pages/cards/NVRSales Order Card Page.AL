@@ -55,7 +55,7 @@ page 50111 "NVR Sales Order Card"
                 {
                     Caption = 'Currency';
                     ApplicationArea = All;
-                    Editable = false;
+                    Editable = true;
                     TableRelation = Currency.Code;
                     //ensure that it shows the currency symbol or suffix example : ZAR
                 }
@@ -78,6 +78,7 @@ page 50111 "NVR Sales Order Card"
                     // and possibly validating the data before saving.
                     Rec.Modify(true);
                     Message('Sales Order saved successfully!');
+                    close;
                 end;
             }
 
@@ -91,4 +92,36 @@ page 50111 "NVR Sales Order Card"
             }
         }
     }
+    procedure GetNewID()
+    begin
+        
+    end;
+
+    trigger OnOpenPage()
+    var
+        SalesOrder: Record "NVR Sales Orders";
+        NewID: Code[20];
+        Counter: Integer;
+    begin
+        if Rec.SalesOrderID = '' then begin
+            Counter := 0;
+            repeat
+                // Generate a unique ID (e.g., "SO" + a counter)
+                Counter := Counter + 1;
+                NewID := 'SO' + PadStr(Format(Counter), 18, '0'); // Prefix with "SO" and pad with zeros to fit within 20 characters
+            until not SalesOrder.Get(NewID); // Ensure the ID does not already exist
+
+            Rec.SalesOrderID := NewID; // Assign the unique ID to the record
+
+            if Rec.IsTemporary then begin
+                Rec.Insert(); // Insert the record into the database if it's new
+            end else begin
+                Rec.Insert(true); // Insert the record into the database if it is not temporary
+            end;
+
+            // Reload the record to ensure the new key is displayed on the card
+            if Rec.Get(NewID) then
+                CurrPage.Update(); // Refresh the page to display the updated value
+        end;
+    end;
 }
