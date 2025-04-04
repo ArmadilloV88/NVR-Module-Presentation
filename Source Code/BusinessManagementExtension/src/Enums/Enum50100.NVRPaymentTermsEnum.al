@@ -1,4 +1,4 @@
-enum 50102 "NVR PaymentTermsEnum"
+enum 50100 "NVR PaymentTermsEnum"
 {
     Extensible = true;
     value(0; Cash)
