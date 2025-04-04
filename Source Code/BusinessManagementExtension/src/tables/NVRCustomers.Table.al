@@ -50,7 +50,7 @@ table 50100 "NVR Customers"
             NotBlank = true;
             Editable = false;
         }
-        field(501007;"Payment Terms"; Enum "NVRPaymentStatusEnum")
+        field(501007;"Payment Terms"; Enum "NVR PaymentTermsEnum")
         {
             InitValue = 21; // Unknown
             Caption = 'Payment Terms';

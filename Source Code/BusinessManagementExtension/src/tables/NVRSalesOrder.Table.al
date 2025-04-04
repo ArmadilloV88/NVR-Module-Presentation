@@ -19,7 +19,23 @@ table 50101 "Sales Orders"
             Editable = false;
             TableRelation = "NVR Customers".CustomerID;
         }
-        
+        field(501013;OrderDate; Date)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Order Date';
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501014; "Payment Status"; Enum "NVRPaymentStatusEnum"){}
+
+        field(501015;TotalAmount; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            Caption = 'Total Amount';
+            NotBlank = true;
+            Editable = false;
+        }
+
     }
     
     keys
