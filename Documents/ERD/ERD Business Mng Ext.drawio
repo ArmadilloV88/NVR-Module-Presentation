@@ -508,7 +508,7 @@
             <mxPoint x="-131.43327658893486" y="4.27712579854164" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fVkNLm9y7KEnHsYmu0PV-1" value="Payment Status Enum NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="1">
+        <mxCell id="fVkNLm9y7KEnHsYmu0PV-1" value="Currency Code[10] NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="1">
           <mxGeometry x="-160" y="310" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>

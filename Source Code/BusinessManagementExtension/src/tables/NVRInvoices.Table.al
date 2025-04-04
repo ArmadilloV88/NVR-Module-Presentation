@@ -1,0 +1,93 @@
+table 50102 "NVR Invoices"
+{
+    DataClassification = CustomerContent;
+    Caption = 'Invoices', MaxLength = 30;
+    TableType = Normal;
+    
+    fields
+    {
+        field(501021;InvoiceID;Code[20])
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Invoice ID';
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501022;SalesOrderID;Code[20])
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Sales Order ID';
+            NotBlank = true;
+            Editable = false;
+            TableRelation = "Sales Orders".SalesOrderID;
+        }
+        field(501023;InvoiceDate;Date)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Invoice Date';
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501024;DueDate;Date)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Due Date';
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501025;AmountDue;Decimal)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Amount Due';
+            NotBlank = true;
+            Editable = false;
+        }
+        field(501026;Currency;Code[10])
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Currency';
+            NotBlank = true;
+            Editable = false;
+            TableRelation = Currency.Code;
+        }
+        field(501027;Status;Enum "NVR PaymentStatusEnum")
+        {
+            InitValue = 0; // Unpaid
+            DataClassification = CustomerContent;
+            Caption = 'Payment Status';
+            NotBlank = true;
+            Editable = false;
+        }
+    }
+    keys
+    {
+        key(PK; InvoiceID)
+        {
+            Clustered = true;
+        }
+        key(FK1;SalesOrderID)
+        {
+            Clustered = false;
+        }
+    }
+    //Might be used later for defencive programming
+    trigger OnInsert()
+    begin
+        
+    end;
+    
+    trigger OnModify()
+    begin
+        
+    end;
+    
+    trigger OnDelete()
+    begin
+        
+    end;
+    
+    trigger OnRename()
+    begin
+        
+    end;
+}

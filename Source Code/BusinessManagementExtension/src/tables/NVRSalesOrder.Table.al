@@ -1,7 +1,9 @@
 table 50101 "Sales Orders"
 {
     DataClassification = ToBeClassified;
-    
+    Caption = 'Sales Orders', MaxLength = 30;
+    TableType = Normal;
+
     fields
     {
         field(501011;SalesOrderID; Code[20])
@@ -52,7 +54,6 @@ table 50101 "Sales Orders"
         }
 
     }
-    
     keys
     {
         key(PK; SalesOrderID)
