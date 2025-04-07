@@ -134,3 +134,5 @@ page 50108 "NVR Sales Order List"
 }
 
 //make a cardpart that shows the information of that sales order
+
+/*Requires Testing and better refinement*/
