@@ -3,13 +3,16 @@ page 50110 "NVR Customer Card"
     Caption = 'Customer Card';
     PageType = Card;
     SourceTable = "NVR Customers";
+    Editable = true;
+    ApplicationArea = All;
 
     layout
     {
         area(content)
         {
-            group(Group)
+            group(Customer)
             {
+
                 field("Customer ID"; Rec.CustomerID)
                 {
                     ApplicationArea = All;

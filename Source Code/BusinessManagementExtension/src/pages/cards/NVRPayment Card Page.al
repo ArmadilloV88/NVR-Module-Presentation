@@ -68,6 +68,7 @@ page 50113 "NVR Payment Card"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
+                    Rec.Modify(true);
                     Message('Payment saved successfully!');
                 end;
             }

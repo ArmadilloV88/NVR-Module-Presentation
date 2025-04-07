@@ -54,14 +54,62 @@ page 50105 "NVR Product List"
 
     actions
     {
-        area(processing)
+        area(Navigation)
         {
             action(NewProduct)
             {
+                Caption = 'New Product';
+                Image = New;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product Card");
+                end;
+            }
+            action(ViewProduct)
+            {
+                Caption = 'View Product';
+                Image = View;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
                     Page.RunModal(Page::"NVR Product Card", Rec);
+                end;
+            }
+        }
+        area(Processing)
+        {
+            action(AddProductCategory)
+            {
+                Caption = 'Add Product Category';
+                Image = New;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product Category Card");
+                end;
+            }
+            action(EditProductCategory)
+            {
+                Caption = 'Edit Product Category';
+                Image = Edit;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product Category Card", Rec);
+                end;
+            }
+            action(DeleteProductCategory)
+            {
+                Caption = 'Delete Product Category';
+                Image = Delete;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    // Code to delete the selected product category
+                    if Rec.Delete() then
+                        Message('Product category deleted successfully.');
+                        Close();
                 end;
             }
         }

@@ -79,6 +79,7 @@ page 50112 "NVR Invoice Card"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
+                    Rec.Modify(true);
                     Message('Invoice saved successfully!');
                 end;
             }

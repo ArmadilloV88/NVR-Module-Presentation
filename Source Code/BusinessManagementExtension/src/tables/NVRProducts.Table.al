@@ -74,8 +74,21 @@ table 50105 "NVR Products"
     //Might be used to check if the product is in stock or not
     //might be used later for defencive programming
     trigger OnInsert()
+    var
+        Product: Record "NVR Products";
+        NewID: Code[20];
+        Counter: Integer;
     begin
-        
+        if ProductID = '' then begin
+            Counter := 0;
+            repeat
+                // Generate a unique ID (e.g., "P" + a counter)
+                Counter := Counter + 1;
+                NewID := 'P' + PadStr(Format(Counter), 19, '0'); // Prefix with "P" and pad with zeros to fit within 20 characters
+            until not Product.Get(NewID); // Ensure the ID does not already exist
+
+            ProductID := NewID; // Assign the unique ID to the ProductID field
+        end;
     end;
     
     trigger OnModify()

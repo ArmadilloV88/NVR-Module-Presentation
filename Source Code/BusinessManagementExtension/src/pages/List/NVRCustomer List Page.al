@@ -1,17 +1,17 @@
 page 50100 "NVR Customer List"
 {
-    ModifyAllowed = false;
+    //ModifyAllowed = false;
     Caption = 'Customer List';
     ApplicationArea = All;
     PageType = List;
-
     SourceTable = "NVR Customers";
+    Editable = true;
 
     layout
     {
         area(content)
         {
-            repeater(Group)
+            repeater(Customers)
             {
                 field("NVR Customer ID"; Rec.CustomerID)
                 {
@@ -72,7 +72,7 @@ page 50100 "NVR Customer List"
 
     actions
     {
-        area(Creation)
+        area(Navigation)
         {
             action(NewCustomer)
             {
@@ -84,15 +84,63 @@ page 50100 "NVR Customer List"
                     Page.RunModal(Page::"NVR Customer Card");
                 end;
             }
-            action(ViewSalesOrders)
-            {
-                //Need to add the page linking between customer and sales order list
-            }
             action(ViewProducts)
             {
-                //Need to add the page linking between customer and product list
+                Caption = 'View Products';
+                Image = View;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product List"); // Opens the product list page
+                end;
             }
+        }
 
+        area(Processing)
+        {
+            action(ViewSalesOrders)
+            {
+                Caption = 'View Sales Orders';
+                Image = Edit;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Sales Order List");
+                end;
+                //Need to add the page linking between customer and sales order list
+            }
+            action(DeleteSalesOrder)
+            {
+                Caption = 'Delete Sales Order';
+                Image = Delete;
+                ApplicationArea = All;
+                trigger OnAction()
+                var
+                    SalesOrderRecord: Record "NVR Sales Orders"; // Replace with the correct table for sales orders
+                begin
+                    // Ensure the Customer ID is available
+                    if Rec.CustomerID = '' then begin
+                        Error('The Customer ID is not available. Please ensure a valid customer is selected.');
+                    end;
+
+                    // Filter the Sales Order record by the selected Customer ID
+                    SalesOrderRecord.SetRange("CustomerID", Rec.CustomerID);
+
+                    // Check if there are any sales orders to delete
+                    if not SalesOrderRecord.FindFirst() then begin
+                        Message('No sales orders found for the selected customer.');
+                        exit;
+                    end;
+
+                    // Confirm deletion
+                    if not Confirm('Are you sure you want to delete the sales order for customer %1?', false, Rec.Name) then
+                        exit;
+
+                    // Delete the sales order
+                    SalesOrderRecord.Delete();
+                    Message('Sales order for customer %1 has been deleted successfully.', Rec.Name);
+                end;
+            }
         }
     }
 }

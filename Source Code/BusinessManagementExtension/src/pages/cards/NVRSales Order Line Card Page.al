@@ -31,11 +31,12 @@ page 50114 "NVR Sales Order Line Card"
                     Caption = 'Product IDs';
                     ApplicationArea = All;
                     Editable = false;
+                    TableRelation = "NVR Products".ProductID; // Links to the "Product ID" field in the base Product table
                     //TableRelation = "NVR Products".ProductID; // Links to the "Product ID" field in the base Product table
                     //we need to make another table for the products as we need to show a list of products in the Sales order line
                 }
 
-                field("NVR Quantity"; Rec.Quantity)
+                /*field("NVR Quantity"; Rec.Quantity)
                 {
                     Caption = 'Quantity';
                     ApplicationArea = All;
@@ -47,15 +48,20 @@ page 50114 "NVR Sales Order Line Card"
                     Caption = 'Unit Price';
                     ApplicationArea = All;
                     Editable = false;
-                }
+                }*/
 
                 field("NVR Line Amount"; Rec."Line Amount")
                 {
-                    Caption = 'Total Line Amount';
+                    Caption = 'Total sales order budget';
                     ApplicationArea = All;
-                    Editable = false;
+                    Editable = true;
                     //we need to ensure that each sales order line does not exceed the sales order amount. for example if you have 1 sales order that has an amount due of 30 000 and the sales order line thats made has an amount of 20 000 that means the left over is 10 000 and any sales order line that is made next musnt exceed 10 000 in order to respect the sales order amount. so the equation will be Remain = sales order amount -(sum of all sales order lines that reference the respective sales order).
                 }
+            }
+            part(SalesOrderLineProductsPart; "NVR Sls. Ord. Line Prdt.")
+            {
+                SubPageLink = "Sales Order Line ID" = field("Sales Order Line ID");
+                ApplicationArea = All;
             }
         }
     }
@@ -69,6 +75,7 @@ page 50114 "NVR Sales Order Line Card"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
+                    Rec.Modify(true);
                     Message('Sales Order Line saved successfully!');
                     Close();
                 end;
@@ -84,6 +91,7 @@ page 50114 "NVR Sales Order Line Card"
             }
         }
     }
+
     trigger OnOpenPage()
     var
         SalesOrderLine: Record "NVR Sales Order Line";
