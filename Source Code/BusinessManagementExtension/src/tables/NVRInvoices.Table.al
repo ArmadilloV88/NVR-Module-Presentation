@@ -40,7 +40,7 @@ table 50102 "NVR Invoices"
             NotBlank = true;
             Editable = true;
         }
-        field(501025;AmountDue;Decimal)
+        field(501025;InvoiceAmount;Decimal)
         {
             DataClassification = CustomerContent;
             Caption = 'Amount Due';
@@ -61,6 +61,20 @@ table 50102 "NVR Invoices"
             DataClassification = CustomerContent;
             Caption = 'Payment Status';
             NotBlank = true;
+            Editable = true;
+        }
+        field(501028; AmountPaid; Decimal)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Amount Paid';
+            //NotBlank = true;
+            Editable = true;
+        }
+        field(501029; "RemAmtToBePaidToInvoice"; Decimal)
+        {
+            DataClassification = CustomerContent;
+            Caption = 'Amount Paid';
+            //NotBlank = true;
             Editable = true;
         }
     }

@@ -179,3 +179,4 @@ page 50104 "NVR Sales Order Line List"
     end;
 }
 /*Requires Further Testing and better refinement*/
+//Needs better logic overlay and refinement - Need to work with budget distribution to each sales order line

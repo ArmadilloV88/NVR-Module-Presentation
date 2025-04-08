@@ -84,6 +84,8 @@ page 50110 "NVR Customer Card"
         {
             action(OK)
             {
+                Caption = 'Save';
+                Image = Save;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
@@ -96,6 +98,8 @@ page 50110 "NVR Customer Card"
 
             action(Cancel)
             {
+                Caption = 'Cancel';
+                Image = Cancel;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin

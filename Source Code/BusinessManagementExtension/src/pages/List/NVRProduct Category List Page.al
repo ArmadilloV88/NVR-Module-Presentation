@@ -38,12 +38,40 @@ page 50106 "NVR Product Category List"
     {
         area(processing)
         {
-            action(NewProductCategory)
+            action(EditProductCategory)
             {
+                Caption = 'Edit Product Category';
+                Image = Edit;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
                     Page.RunModal(Page::"NVR Product Category Card", Rec);
+                end;
+            }
+            action(DeleteProductCategory)
+            {
+                Caption = 'Delete Product Category';
+                Image = Delete;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    if Confirm('Are you sure you want to delete this product category?') then begin
+                        Rec.Delete();
+                        Message('Product category deleted successfully.');
+                    end;
+                end;
+            }
+        }
+        area(Creation)
+        {
+            action(NewProductCategory)
+            {
+                Caption = 'New Product Category';
+                Image = New;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product Category Card");
                 end;
             }
         }

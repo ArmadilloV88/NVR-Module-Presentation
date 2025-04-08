@@ -1,5 +1,9 @@
 page 50103 "NVR Payment List"
 {
+    ModifyAllowed = false;
+    InsertAllowed = true;
+    DeleteAllowed = false;
+    ApplicationArea = All;
     Caption = 'Payment List';
     PageType = List;
     SourceTable = "NVR Payments";
@@ -46,16 +50,16 @@ page 50103 "NVR Payment List"
 
     actions
     {
-        area(processing)
+        /*area(processing)
         {
             action(NewPayment)
             {
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Page.RunModal(Page::"NVR Payment Card", Rec);
+                    Page.RunModal(Page::"NVR Payment Card");
                 end;
             }
-        }
+        }*/
     }
 }

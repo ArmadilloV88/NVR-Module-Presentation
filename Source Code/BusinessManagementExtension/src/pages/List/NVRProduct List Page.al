@@ -59,7 +59,7 @@ page 50105 "NVR Product List"
             action(NewProduct)
             {
                 Caption = 'New Product';
-                Image = New;
+                Image = NewItem;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
@@ -68,12 +68,24 @@ page 50105 "NVR Product List"
             }
             action(ViewProduct)
             {
-                Caption = 'View Product';
-                Image = View;
+                Caption = 'Edit Product';
+                Image = Edit;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
                     Page.RunModal(Page::"NVR Product Card", Rec);
+                end;
+            }
+            action(DeleteProduct)
+            {
+                Caption = 'Delete Product';
+                Image = Delete;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    // Code to delete the selected product
+                    if Rec.Delete() then
+                        Message('Product deleted successfully.');
                 end;
             }
         }
@@ -89,7 +101,17 @@ page 50105 "NVR Product List"
                     Page.RunModal(Page::"NVR Product Category Card");
                 end;
             }
-            action(EditProductCategory)
+            action(ViewProductCategory)
+            {
+                Caption = 'View Product Category';
+                Image = View;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product Category List");
+                end;
+            }
+            /*action(EditProductCategory)
             {
                 Caption = 'Edit Product Category';
                 Image = Edit;
@@ -111,7 +133,7 @@ page 50105 "NVR Product List"
                         Message('Product category deleted successfully.');
                         Close();
                 end;
-            }
+            }*/
         }
     }
 }
