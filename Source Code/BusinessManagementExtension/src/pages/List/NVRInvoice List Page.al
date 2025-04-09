@@ -83,8 +83,12 @@ page 50102 "NVR Invoice List"
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
-                    Rec.Delete();
-                    Message('Invoice deleted successfully!');
+                    if Confirm('Are you sure you want to delete this invoice?', false) then begin
+                        Rec.Delete(); // Delete the record
+                        Commit(); // Commit the transaction to ensure the record is fully removed
+                        CurrPage.Update(); // Refresh the page to reflect the changes
+                        Message('Invoice deleted successfully!');
+                    end;
                 end;
             }
             action(ViewPayments)
@@ -106,8 +110,23 @@ page 50102 "NVR Invoice List"
                 Image = Invoice;
                 ApplicationArea = All;
                 trigger OnAction()
+                var
+                    InvoiceRecord: Record "NVR Invoices";
+                    NewInvoiceID: Code[20];
                 begin
-                    Page.RunModal(Page::"NVR Invoice Document");
+                    // Generate a unique Invoice ID
+                    NewInvoiceID := GenerateUniqueInvoiceID();
+
+                    // Initialize the record with the generated Invoice ID
+                    InvoiceRecord.Init();
+                    InvoiceRecord."InvoiceID" := NewInvoiceID;
+                    InvoiceRecord.Insert(true); // Save the record to the database
+
+                    // Commit the transaction to ensure the record is saved
+                    Commit();
+
+                    // Open the Invoice Document page with the new Invoice ID
+                    Page.RunModal(Page::"NVR Invoice Document", InvoiceRecord);
                 end;
             }
             action(NewPayment)
@@ -126,6 +145,21 @@ page 50102 "NVR Invoice List"
     var
         StatusStyle: Text;
 
+    procedure GenerateUniqueInvoiceID(): Code[20]
+    var
+        Counter: Integer;
+        NewID: Code[20];
+        TempInvoiceRecord: Record "NVR Invoices";
+    begin
+        Counter := 0;
+        repeat
+            Counter := Counter + 1;
+            NewID := 'INV' + PadStr(Format(Counter), 17, '0'); // Prefix with "INV" and pad with zeros
+        until not TempInvoiceRecord.Get(NewID);
+
+        exit(NewID);
+    end;
+        
     trigger OnAfterGetRecord()
     var
         PaymentRecord: Record "NVR Payments";

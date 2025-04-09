@@ -40,12 +40,20 @@ table 50102 "NVR Invoices"
             NotBlank = true;
             Editable = true;
         }
-        field(501025;InvoiceAmount;Decimal)
+        field(501025; InvoiceAmount; Decimal)
         {
             DataClassification = CustomerContent;
             Caption = 'Amount Due';
-            NotBlank = true;
             Editable = true;
+            trigger OnValidate()
+            begin
+                // Calculate Remaining Amount to Be Paid
+                "RemAmtToBePaidToInvoice" := InvoiceAmount - AmountPaid;
+
+                // Ensure Remaining Amount is not negative
+                if "RemAmtToBePaidToInvoice" < 0 then
+                    "RemAmtToBePaidToInvoice" := 0;
+            end;
         }
         field(501026;Currency;Code[10])
         {
@@ -67,8 +75,16 @@ table 50102 "NVR Invoices"
         {
             DataClassification = CustomerContent;
             Caption = 'Amount Paid';
-            //NotBlank = true;
             Editable = true;
+            trigger OnValidate()
+            begin
+                // Calculate Remaining Amount to Be Paid
+                "RemAmtToBePaidToInvoice" := InvoiceAmount - AmountPaid;
+
+                // Ensure Remaining Amount is not negative
+                if "RemAmtToBePaidToInvoice" < 0 then
+                    "RemAmtToBePaidToInvoice" := 0;
+            end;
         }
         field(501029; "RemAmtToBePaidToInvoice"; Decimal)
         {
@@ -97,7 +113,12 @@ table 50102 "NVR Invoices"
     
     trigger OnModify()
     begin
-        
+    // Calculate Remaining Amount to Be Paid
+        "RemAmtToBePaidToInvoice" := InvoiceAmount - AmountPaid;
+
+    // Ensure Remaining Amount is not negative
+        if "RemAmtToBePaidToInvoice" < 0 then
+            "RemAmtToBePaidToInvoice" := 0;
     end;
     
     trigger OnDelete()
