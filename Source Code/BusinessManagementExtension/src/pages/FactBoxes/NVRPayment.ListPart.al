@@ -41,9 +41,17 @@ page 50117 "NVR Payment ListPart"
                     DecimalPlaces = 2;
                     Editable = false;
                 }
+                field("Remaining Amount"; GetRemainingAmount())
+                {
+                    Caption = 'Remaining Amount';
+                    ApplicationArea = All;
+                    DecimalPlaces = 2;
+                    Editable = false;
+                }
             }
         }
     }
+
     actions
     {
         area(Processing)
@@ -56,28 +64,16 @@ page 50117 "NVR Payment ListPart"
                 trigger OnAction()
                 var
                     NewPayment: Record "NVR Payments";
-                    InvoiceRecord: Record "NVR Invoices";
-                    InvoiceID: Code[20];
                     NewPaymentID: Code[20];
                     Counter: Integer;
                 begin
-                    // Debug the Invoice ID
-                    InvoiceID := Rec.InvoiceID;
-                    Message('Invoice ID in AddPayment: %1', InvoiceID);
+                    // Validate the Selected Invoice
+                    if SelectedInvoice.IsEmpty() then
+                        Error('Please select a valid Invoice before adding a payment.');
 
-                    // Validate the Invoice ID
-                    if InvoiceID = '' then
-                        Error('Please select a valid Invoice ID before adding a payment.');
-
-                    // Check if the invoice exists and its status
-                    if InvoiceRecord.Get(InvoiceID) then begin
-                        if InvoiceRecord.Status = Enum::"NVR PaymentStatusEnum"::Paid then begin
-                            Message('The invoice is already fully paid. No additional payments are required.');
-                            exit; // Exit the action as no payment is needed
-                        end;
-                    end else begin
-                        Error('The selected Invoice ID does not exist.');
-                    end;
+                    // Check if the invoice is fully paid
+                    if SelectedInvoice.Status = Enum::"NVR PaymentStatusEnum"::Paid then
+                        Error('The selected invoice is already fully paid. No additional payments can be added.');
 
                     // Generate a unique Payment ID
                     Counter := 0;
@@ -86,10 +82,10 @@ page 50117 "NVR Payment ListPart"
                         NewPaymentID := 'PAY' + PadStr(Format(Counter), 17, '0'); // Prefix with "PAY" and pad with zeros
                     until not NewPayment.Get(NewPaymentID);
 
-                    // Initialize a new temporary payment record
+                    // Initialize a new payment record
                     NewPayment.Init();
-                    NewPayment.PaymentID := NewPaymentID; // Assign the unique Payment ID
-                    NewPayment.InvoiceID := InvoiceID; // Link the payment to the invoice
+                    NewPayment.PaymentID := NewPaymentID;
+                    NewPayment.InvoiceID := SelectedInvoice.InvoiceID;
 
                     // Insert the new payment record into the database
                     NewPayment.Insert(true);
@@ -100,29 +96,14 @@ page 50117 "NVR Payment ListPart"
                     // Open the Payment Card page for the new payment
                     Page.RunModal(Page::"NVR Payment Card", NewPayment);
 
-                    // Update the remaining amount and status of the associated invoice
-                    UpdateRemainingAmountToBePaid(InvoiceID);
+                    // Dynamically update the remaining amount of the associated invoice
+                    UpdateRemainingAmountToBePaid(SelectedInvoice.InvoiceID);
+
+                    // Refresh the parent page (NVR Invoice List)
+                    CurrPage.Update();
                 end;
             }
-            action(EditPayment)
-            {
-                Caption = 'Edit Payment';
-                Image = Edit;
-                ApplicationArea = All;
-                trigger OnAction()
-                var
-                    InvoiceID: Code[20];
-                begin
-                    InvoiceID := Rec.InvoiceID;
 
-                    // Open the Payment Card page to edit the selected payment
-                    Page.RunModal(Page::"NVR Payment Card", Rec);
-
-                    // Update the remaining amount and status of the associated invoice
-                    if InvoiceID <> '' then
-                        UpdateRemainingAmountToBePaid(InvoiceID);
-                end;
-            }
             action(DeletePayment)
             {
                 Caption = 'Delete Payment';
@@ -130,20 +111,34 @@ page 50117 "NVR Payment ListPart"
                 ApplicationArea = All;
                 trigger OnAction()
                 var
-                    InvoiceID: Code[20];
+                    InvoiceRecord: Record "NVR Invoices";
                 begin
-                    InvoiceID := Rec.InvoiceID;
+                    // Validate that a payment is selected
+                    if Rec.IsEmpty() then
+                        Error('Please select a payment to delete.');
+
+                    // Retrieve the associated invoice
+                    if not InvoiceRecord.Get(Rec.InvoiceID) then
+                        Error('The associated invoice could not be found.');
+
+                    // Subtract the payment amount from the invoice's AmountPaid
+                    InvoiceRecord.AmountPaid := InvoiceRecord.AmountPaid - Rec.PaymentAmount;
+
+                    // Ensure the AmountPaid does not go below zero
+                    if InvoiceRecord.AmountPaid < 0 then
+                        InvoiceRecord.AmountPaid := 0;
+
+                    // Save the updated invoice record
+                    InvoiceRecord.Modify();
 
                     // Delete the selected payment
-                    if Rec.Delete() then begin
-                        Message('Payment deleted successfully!');
+                    Rec.Delete();
 
-                        // Update the remaining amount and status of the associated invoice
-                        if InvoiceID <> '' then
-                            UpdateRemainingAmountToBePaid(InvoiceID);
-                    end else begin
-                        Error('Failed to delete payment.');
-                    end;
+                    // Recalculate the remaining amount and status for the invoice
+                    UpdateRemainingAmountToBePaid(InvoiceRecord.InvoiceID);
+
+                    // Refresh the parent page (NVR Invoice List)
+                    CurrPage.Update();
                 end;
             }
         }
@@ -167,7 +162,7 @@ page 50117 "NVR Payment ListPart"
                     TotalPayments += PaymentRecord."PaymentAmount";
                 until PaymentRecord.Next() = 0;
 
-            // Calculate the remaining amount to be paid
+            // Dynamically calculate the remaining amount
             InvoiceRecord."RemAmtToBePaidToInvoice" := InvoiceRecord."InvoiceAmount" - TotalPayments;
 
             // Ensure the remaining amount is not negative
@@ -186,8 +181,16 @@ page 50117 "NVR Payment ListPart"
             InvoiceRecord.Modify();
         end;
     end;
-    trigger OnOpenPage()
+
+    procedure GetRemainingAmount(): Decimal
+    var
+        InvoiceRecord: Record "NVR Invoices";
     begin
-        Message('Invoice ID in Payment ListPart: %1', Rec.InvoiceID);
+        if InvoiceRecord.Get(Rec.InvoiceID) then
+            exit(InvoiceRecord."RemAmtToBePaidToInvoice");
+        exit(0);
     end;
+
+    var
+        SelectedInvoice: Record "NVR Invoices";
 }

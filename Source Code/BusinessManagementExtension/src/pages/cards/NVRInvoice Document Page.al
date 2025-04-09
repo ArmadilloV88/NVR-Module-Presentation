@@ -142,7 +142,6 @@ page 50112 "NVR Invoice Document"
                 AmountPaid := CalcAmountPaid(Rec.InvoiceID);
 
                 // Update the page to reflect the changes
-                //UpdateRemainingAmountStyle();
                 CurrPage.Update();
             end else begin
                 Error('Invoice with ID %1 not found.', Rec."InvoiceID");
@@ -154,8 +153,6 @@ page 50112 "NVR Invoice Document"
         TotalAmountDue: Decimal;
         RemainingAmount: Decimal;
         AmountPaid: Decimal;
-        Counter: Integer;
-        NewID: Code[20];
         RemainingAmountStyle: Text;
 
     procedure ValidateInvoiceAmount()
@@ -171,39 +168,10 @@ page 50112 "NVR Invoice Document"
             if InvoiceRecord.InvoiceAmount > Rec.InvoiceAmount then begin
                 Message(
                     'The Invoice Amount Due cannot exceed the Remaining Amount (%1). The existing Invoice Amount (%2) will be retained.',
-                    Format((RemainingAmount)), // Ensure Remaining Amount is not displayed as negative
-                    Format(Rec.InvoiceAmount)
+                    Format(RemainingAmount), Format(Rec.InvoiceAmount)
                 );
                 InvoiceRecord.InvoiceAmount := Rec.InvoiceAmount; // Retain the existing Invoice Amount
                 CurrPage.Update(); // Refresh the page to reflect the retained value
-                exit; // Exit to prevent further processing
-            end else begin
-                // Allow reducing the Invoice Amount
-                InvoiceRecord.Modify(true);
-
-                // Recalculate the Remaining Amount
-                NewRemainingAmount := CalcRemainingAmount(InvoiceRecord.SalesOrderID);
-
-                // Check if the Remaining Amount is valid
-                if not IsRemainingAmountValid(NewRemainingAmount) then begin
-                    Message(
-                        'The Invoice Amount Due cannot result in a negative Remaining Amount (%1). The existing Invoice Amount (%2) will be retained.',
-                        Format(NewRemainingAmount), Format(Rec.InvoiceAmount)
-                    );
-                    InvoiceRecord.InvoiceAmount := Rec.InvoiceAmount; // Retain the existing Invoice Amount
-                    CurrPage.Update(); // Refresh the page to reflect the retained value
-                    exit; // Exit to prevent further processing
-                end;
-
-                // Update the Remaining Amount and style dynamically
-                RemainingAmount := NewRemainingAmount;
-                //UpdateRemainingAmountStyle();
-
-                // Inject the updated data back into Rec to reflect it on the page
-                Rec := InvoiceRecord;
-
-                // Update the page to reflect the changes
-                CurrPage.Update();
                 exit; // Exit to prevent further processing
             end;
         end;
@@ -237,10 +205,11 @@ page 50112 "NVR Invoice Document"
             exit; // Exit to prevent further processing
         end;
 
-
         // Update the Remaining Amount and style dynamically
         RemainingAmount := NewRemainingAmount;
-        //UpdateRemainingAmountStyle();
+
+        // Update the `RemAmtToBePaidToInvoice` only if the invoice amount is valid
+        InvoiceRecord.RemAmtToBePaidToInvoice := InvoiceRecord.InvoiceAmount;
 
         // Inject the updated data back into Rec to reflect it on the page
         Rec := InvoiceRecord;
@@ -248,6 +217,7 @@ page 50112 "NVR Invoice Document"
         // Update the page to reflect the changes
         CurrPage.Update();
     end;
+
     procedure HandleSalesOrderSelection()
     var
         SalesOrder: Record "NVR Sales Orders";
@@ -260,7 +230,6 @@ page 50112 "NVR Invoice Document"
             if SalesOrder.Get(InvoiceRecord.SalesOrderID) then begin
                 TotalAmountDue := SalesOrder."TotalAmount";
                 InvoiceRecord.Currency := SalesOrder.Currency;
-                //could make a procedure call here of CalcRemainingAmount
             end else begin
                 TotalAmountDue := 0;
                 InvoiceRecord.Currency := '';
@@ -273,26 +242,12 @@ page 50112 "NVR Invoice Document"
         // Calculate Remaining Amount
         RemainingAmount := CalcRemainingAmount(InvoiceRecord.SalesOrderID);
 
-        // Update the style dynamically
-        //UpdateRemainingAmountStyle();
-
-        // Save the changes back to the database
-        InvoiceRecord.Modify(true);
-
         // Inject the data back into Rec to reflect it on the page
         Rec := InvoiceRecord;
 
         // Update the page to reflect the changes
         CurrPage.Update();
     end;
-
-    /*procedure UpdateRemainingAmountStyle()
-    begin
-    if RemainingAmount < 0 then
-        RemainingAmountStyle := 'Danger'; // Red color
-    else
-        RemainingAmountStyle := ''; // Default style
-    end;*/
 
     procedure CalcRemainingAmount(SalesOrderID: Code[20]): Decimal
     var

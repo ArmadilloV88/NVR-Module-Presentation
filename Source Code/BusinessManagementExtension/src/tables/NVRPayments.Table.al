@@ -3,6 +3,8 @@ table 50103 "NVR Payments"
     DataClassification = CustomerContent;
     Caption = 'Payments', MaxLength = 30;
     TableType = Normal;
+    DrillDownPageID = "NVR Invoice List"; // Links to the Invoice List page
+    LookupPageID = "NVR Invoice List"; // Enables lookup functionality
     
     fields
     {
@@ -24,6 +26,7 @@ table 50103 "NVR Payments"
             NotBlank = true;
             Editable = true;
             TableRelation = "NVR Invoices".InvoiceID;
+
         }
         field(501033;"Payment Date"; Date)
         {

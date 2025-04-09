@@ -51,12 +51,12 @@ page 50102 "NVR Invoice List"
                     Caption = 'Status';
                     ApplicationArea = All;
                     Editable = false; // Status is non-editable
-                    StyleExpr = StatusStyle; // Dynamically apply style based on status
+                    StyleExpr = StatusStyle; // Bind to the StatusStyle variable
                 }
             }
             part(PaymentsListPart; "NVR Payment ListPart")
             {
-                SubPageLink = "InvoiceID" = FIELD(InvoiceID); // Link payments to the current invoice
+                SubPageLink = "InvoiceID" = FIELD(InvoiceID); // Automatically filter payments by the selected invoice
                 ApplicationArea = All;
             }
         }
@@ -74,6 +74,9 @@ page 50102 "NVR Invoice List"
                 trigger OnAction()
                 begin
                     Page.RunModal(Page::"NVR Invoice Document", Rec);
+
+                    // Update the invoice status and remaining amount after editing
+                    UpdateInvoiceStatusAndRemainingAmount(Rec.InvoiceID);
                 end;
             }
             action(DeleteInvoice)
@@ -127,6 +130,9 @@ page 50102 "NVR Invoice List"
 
                     // Open the Invoice Document page with the new Invoice ID
                     Page.RunModal(Page::"NVR Invoice Document", InvoiceRecord);
+
+                    // Update the invoice status and remaining amount after creating a new invoice
+                    UpdateInvoiceStatusAndRemainingAmount(InvoiceRecord.InvoiceID);
                 end;
             }
             action(NewPayment)
@@ -159,38 +165,70 @@ page 50102 "NVR Invoice List"
 
         exit(NewID);
     end;
-        
-    trigger OnAfterGetRecord()
+
+    trigger OnAfterGetCurrRecord()
+    begin
+        // Update the invoice status and remaining amount when the record is loaded
+        UpdateInvoiceStatusAndRemainingAmount(Rec.InvoiceID);
+
+        // Update the StatusStyle variable based on the current status
+        StatusStyle := GetStatusStyle();
+    end;
+
+    procedure UpdateInvoiceStatusAndRemainingAmount(InvoiceID: Code[20])
     var
+        InvoiceRecord: Record "NVR Invoices";
         PaymentRecord: Record "NVR Payments";
         TotalPayments: Decimal;
+        RemainingAmount: Decimal;
+        Tolerance: Decimal;
     begin
-        // Calculate the total payments for the current invoice
+        // Initialize the total payments and tolerance
         TotalPayments := 0;
-        PaymentRecord.SetRange("InvoiceID", Rec.InvoiceID);
-        if PaymentRecord.FindSet() then
-            repeat
-                TotalPayments += PaymentRecord."PaymentAmount";
-            until PaymentRecord.Next() = 0;
+        Tolerance := 0.01; // Allow for small rounding differences
 
-        // Determine the status based on payments
-        if TotalPayments = Rec.InvoiceAmount then
-            Rec.Status := Enum::"NVR PaymentStatusEnum"::Paid
-        else if TotalPayments = 0 then
-            Rec.Status := Enum::"NVR PaymentStatusEnum"::NotPaid
-        else
-            Rec.Status := Enum::"NVR PaymentStatusEnum"::PartiallyPaid;
+        // Retrieve the invoice record
+        if InvoiceRecord.Get(InvoiceID) then begin
+            // Sum all payments made to the invoice
+            PaymentRecord.SetRange("InvoiceID", InvoiceID);
+            if PaymentRecord.FindSet() then
+                repeat
+                    TotalPayments += PaymentRecord."PaymentAmount";
+                until PaymentRecord.Next() = 0;
 
-        // Apply styles based on status
+            // Dynamically calculate the remaining amount
+            RemainingAmount := InvoiceRecord."InvoiceAmount" - TotalPayments;
+
+            // Ensure the remaining amount is not negative
+            if RemainingAmount < 0 then
+                RemainingAmount := 0;
+
+            // Update the invoice status based on the remaining amount
+            if RemainingAmount <= Tolerance then
+                Rec.Status := Enum::"NVR PaymentStatusEnum"::Paid
+            else if TotalPayments = 0 then
+                Rec.Status := Enum::"NVR PaymentStatusEnum"::NotPaid
+            else
+                Rec.Status := Enum::"NVR PaymentStatusEnum"::PartiallyPaid;
+
+            // Update the remaining amount in the current record
+            Rec."RemAmtToBePaidToInvoice" := RemainingAmount;
+
+            // Do not modify the record here to avoid conflicts
+        end;
+    end;
+
+    procedure GetStatusStyle(): Text
+    begin
         case Rec.Status of
             Enum::"NVR PaymentStatusEnum"::Paid:
-                StatusStyle := 'Favorable'; // Green
+                exit('Positive'); // Green for Paid
             Enum::"NVR PaymentStatusEnum"::NotPaid:
-                StatusStyle := 'Unfavorable'; // Red
+                exit('Negative'); // Red for Not Paid
             Enum::"NVR PaymentStatusEnum"::PartiallyPaid:
-                StatusStyle := 'Attention'; // Yellow
+                exit('Attention'); // Yellow for Partially Paid
             else
-                StatusStyle := ''; // Default style
+                exit('');
         end;
     end;
 }

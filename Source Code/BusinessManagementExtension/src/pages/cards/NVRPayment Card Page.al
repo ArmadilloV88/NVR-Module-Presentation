@@ -79,16 +79,10 @@ page 50113 "NVR Payment Card"
                                 Rec.PaymentAmount := InvoiceRecord."RemAmtToBePaidToInvoice"; // Adjust the payment amount
                             end;
 
-                            // Call the procedure to update the remaining amount
+                            // Call the procedure to update the remaining amount and status
                             UpdateRemainingAmountToBePaid(Rec.InvoiceID);
 
-                            // If the remaining amount is 0, set the invoice status to Paid
-                            if InvoiceRecord."RemAmtToBePaidToInvoice" = 0 then begin
-                                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::Paid;
-                                InvoiceRecord.Modify();
-                            end;
-
-                            // Update the RemainingAmt variable
+                            // Refresh the RemainingAmt variable
                             RemainingAmt := InvoiceRecord."RemAmtToBePaidToInvoice";
                         end else
                             Error('The selected Invoice ID does not exist.');
@@ -113,10 +107,44 @@ page 50113 "NVR Payment Card"
             {
                 ApplicationArea = All;
                 trigger OnAction()
+                var
+                    InvoiceRecord: Record "NVR Invoices";
                 begin
-                    Rec.Modify(true); // Explicitly save the record
+                    // Save the payment record
+                    Rec.Modify(true);
+
+                    // Refresh the RemainingAmt field and update the status
+                    if InvoiceRecord.Get(Rec.InvoiceID) then begin
+                        UpdateRemainingAmountToBePaid(Rec.InvoiceID);
+                        RemainingAmt := InvoiceRecord."RemAmtToBePaidToInvoice";
+                    end;
+
                     Message('Payment saved successfully!');
                     Close();
+                end;
+            }
+
+            action(DeletePayment)
+            {
+                Caption = 'Delete Payment';
+                ApplicationArea = All;
+                trigger OnAction()
+                var
+                    InvoiceRecord: Record "NVR Invoices";
+                begin
+                    // Delete the payment record
+                    if Confirm('Are you sure you want to delete this payment?', false) then begin
+                        Rec.Delete(true);
+
+                        // Refresh the RemainingAmt field and update the status
+                        if InvoiceRecord.Get(Rec.InvoiceID) then begin
+                            UpdateRemainingAmountToBePaid(Rec.InvoiceID);
+                            RemainingAmt := InvoiceRecord."RemAmtToBePaidToInvoice";
+                        end;
+
+                        Message('Payment deleted successfully!');
+                        Close();
+                    end;
                 end;
             }
 
@@ -132,10 +160,19 @@ page 50113 "NVR Payment Card"
     }
 
     trigger OnClosePage()
+    var
+        InvoiceRecord: Record "NVR Invoices";
     begin
         // Prevent automatic saving of the record when the page is closed
-        if Confirm('Do you want to save changes?', false) then
-            Rec.Modify(true); // Save the record only if confirmed
+        if Confirm('Do you want to save changes?', false) then begin
+            Rec.Modify(true); // Save the record
+
+            // Refresh the RemainingAmt field and update the status
+            if InvoiceRecord.Get(Rec.InvoiceID) then begin
+                UpdateRemainingAmountToBePaid(Rec.InvoiceID);
+                RemainingAmt := InvoiceRecord."RemAmtToBePaidToInvoice";
+            end;
+        end;
     end;
 
     trigger OnOpenPage()
@@ -176,7 +213,15 @@ page 50113 "NVR Payment Card"
             if InvoiceRecord."RemAmtToBePaidToInvoice" < 0 then
                 InvoiceRecord."RemAmtToBePaidToInvoice" := 0;
 
-            // Update the invoice record
+            // Update the invoice status based on the remaining amount
+            if InvoiceRecord."RemAmtToBePaidToInvoice" = 0 then
+                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::Paid
+            else if TotalPayments = 0 then
+                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::NotPaid
+            else
+                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::PartiallyPaid;
+
+            // Save the changes to the invoice
             InvoiceRecord.Modify();
         end;
     end;
