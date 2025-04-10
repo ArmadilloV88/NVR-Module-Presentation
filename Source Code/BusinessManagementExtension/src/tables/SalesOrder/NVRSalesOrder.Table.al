@@ -75,6 +75,7 @@ table 50101 "NVR Sales Orders"
             Clustered = false;
         }
     }
+
     //might be used later for defencive programming
     trigger OnInsert()
     begin

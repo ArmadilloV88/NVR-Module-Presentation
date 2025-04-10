@@ -122,30 +122,24 @@ page 50112 "NVR Invoice Document"
 
     trigger OnOpenPage()
     var
-        InvoiceRecord: Record "NVR Invoices";
         SalesOrder: Record "NVR Sales Orders";
     begin
-        if Rec."InvoiceID" <> '' then begin
-            // Fetch the existing record based on the passed Invoice ID
-            if InvoiceRecord.Get(Rec."InvoiceID") then begin
-                Rec := InvoiceRecord;
-
-                // Load Total Amount Due and Remaining Amount
-                if Rec.SalesOrderID <> '' then begin
-                    if SalesOrder.Get(Rec.SalesOrderID) then begin
-                        TotalAmountDue := SalesOrder."TotalAmount";
-                        RemainingAmount := CalcRemainingAmount(Rec.SalesOrderID);
-                    end;
+        if Rec.InvoiceID <> '' then begin
+            // Load Total Amount Due and Remaining Amount
+            if Rec.SalesOrderID <> '' then begin
+                if SalesOrder.Get(Rec.SalesOrderID) then begin
+                    TotalAmountDue := SalesOrder."TotalAmount";
+                    RemainingAmount := CalcRemainingAmount(Rec.SalesOrderID);
                 end;
-
-                // Calculate Amount Paid
-                AmountPaid := CalcAmountPaid(Rec.InvoiceID);
-
-                // Update the page to reflect the changes
-                CurrPage.Update();
-            end else begin
-                Error('Invoice with ID %1 not found.', Rec."InvoiceID");
             end;
+
+            // Calculate Amount Paid
+            AmountPaid := CalcAmountPaid(Rec.InvoiceID);
+
+            // Update the page to reflect the changes
+            CurrPage.Update();
+        end else begin
+            Error('Invoice with ID %1 not found.', Rec.InvoiceID);
         end;
     end;
 

@@ -84,6 +84,7 @@ page 50100 "NVR Customer List"
                     Page.RunModal(Page::"NVR Customer Card");
                 end;
             }
+            //will be replaced with a button in the base customer list
             action(EditCustomer)
             {
                 Caption = 'Edit Customer';
@@ -172,7 +173,7 @@ page 50100 "NVR Customer List"
                     Page.RunModal(Page::"NVR Product Category List"); // Opens the product category list page
                 end;
             }
-            action(ViewInvoices)
+            /*action(ViewInvoices)
             {
                 Caption = 'View Invoices';
                 Image = View;
@@ -181,7 +182,8 @@ page 50100 "NVR Customer List"
                 begin
                     Page.RunModal(Page::"NVR Invoice List"); // Opens the invoice list page
                 end;
-            }
+            }*///Moved this over to the Sales Order List page as a button
+            
             /*Phase 2
                 View of Invoices - Christiaan
                 View of Payments - Christiaan

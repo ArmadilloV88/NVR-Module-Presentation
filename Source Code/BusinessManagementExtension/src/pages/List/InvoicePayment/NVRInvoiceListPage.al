@@ -72,11 +72,19 @@ page 50102 "NVR Invoice List"
                 Image = Edit;
                 ApplicationArea = All;
                 trigger OnAction()
+                var
+                    InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
                 begin
-                    Page.RunModal(Page::"NVR Invoice Document", Rec);
+                    if Rec.InvoiceID = '' then
+                        Error('No Invoice is selected. Please select an invoice to edit.');
+
+                    // Edit the invoice using the Codeunit
+                    InvoiceHandler.EditInvoice(Rec.InvoiceID, Rec.InvoiceAmount);
 
                     // Update the invoice status and remaining amount after editing
                     UpdateInvoiceStatusAndRemainingAmount(Rec.InvoiceID);
+
+                    Message('Invoice %1 has been updated successfully.', Rec.InvoiceID);
                 end;
             }
             action(DeleteInvoice)
@@ -85,12 +93,18 @@ page 50102 "NVR Invoice List"
                 Image = Delete;
                 ApplicationArea = All;
                 trigger OnAction()
+                var
+                    InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
                 begin
+                    if Rec.InvoiceID = '' then
+                        Error('No Invoice is selected. Please select an invoice to delete.');
+
                     if Confirm('Are you sure you want to delete this invoice?', false) then begin
-                        Rec.Delete(); // Delete the record
-                        Commit(); // Commit the transaction to ensure the record is fully removed
+                        // Delete the invoice using the Codeunit
+                        InvoiceHandler.DeleteInvoice(Rec.InvoiceID);
+
                         CurrPage.Update(); // Refresh the page to reflect the changes
-                        Message('Invoice deleted successfully!');
+                        Message('Invoice %1 has been deleted successfully.', Rec.InvoiceID);
                     end;
                 end;
             }
@@ -114,25 +128,21 @@ page 50102 "NVR Invoice List"
                 ApplicationArea = All;
                 trigger OnAction()
                 var
-                    InvoiceRecord: Record "NVR Invoices";
-                    NewInvoiceID: Code[20];
+                    InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
+                    NewInvoice: Record "NVR Invoices";
                 begin
-                    // Generate a unique Invoice ID
-                    NewInvoiceID := GenerateUniqueInvoiceID();
-
-                    // Initialize the record with the generated Invoice ID
-                    InvoiceRecord.Init();
-                    InvoiceRecord."InvoiceID" := NewInvoiceID;
-                    InvoiceRecord.Insert(true); // Save the record to the database
-
-                    // Commit the transaction to ensure the record is saved
-                    Commit();
+                    // Add a new invoice using the Codeunit
+                    NewInvoice := InvoiceHandler.AddNewInvoice();
+                    Message('New Invoice Created: %1 SalesOrderID : %2' , NewInvoice.InvoiceID, NewInvoice.SalesOrderID);
+                    
 
                     // Open the Invoice Document page with the new Invoice ID
-                    Page.RunModal(Page::"NVR Invoice Document", InvoiceRecord);
+                    Page.RunModal(Page::"NVR Invoice Document", NewInvoice);
 
                     // Update the invoice status and remaining amount after creating a new invoice
-                    UpdateInvoiceStatusAndRemainingAmount(InvoiceRecord.InvoiceID);
+                    UpdateInvoiceStatusAndRemainingAmount(NewInvoice.InvoiceID);
+
+                    Message('New Invoice %1 has been created successfully.', NewInvoice.InvoiceID);
                 end;
             }
         }
@@ -140,36 +150,13 @@ page 50102 "NVR Invoice List"
 
     var
         StatusStyle: Text;
-        SelectedInvoice: Record "NVR Invoices"; // Variable to store the currently selected invoice
-
-    procedure GenerateUniqueInvoiceID(): Code[20]
-    var
-        Counter: Integer;
-        NewID: Code[20];
-        TempInvoiceRecord: Record "NVR Invoices";
-    begin
-        Counter := 0;
-        repeat
-            Counter := Counter + 1;
-            NewID := 'INV' + PadStr(Format(Counter), 17, '0'); // Prefix with "INV" and pad with zeros
-        until not TempInvoiceRecord.Get(NewID);
-
-        exit(NewID);
-    end;
 
     trigger OnAfterGetCurrRecord()
     var
         PaymentsListPartPage: Page "NVR Payment ListPart";
     begin
-        // Assign the current record to SelectedInvoice
-        SelectedInvoice := Rec;
-
-        // Debugging messages to verify the assignment
-        //Message('Current Record Invoice ID: %1', Rec.InvoiceID); // Debugging message
-        //Message('Selected Invoice ID in Invoice List Page: %1', SelectedInvoice.InvoiceID); // Debugging message
-
-        // Pass the SelectedInvoice to the Payment ListPart
-        CurrPage.PaymentsListPart.PAGE.SetSelectedInvoice(SelectedInvoice);
+        // Pass the current record to the Payment ListPart
+        CurrPage.PaymentsListPart.PAGE.SetSelectedInvoice(Rec);
     end;
 
     procedure UpdateInvoiceStatusAndRemainingAmount(InvoiceID: Code[20])
@@ -216,7 +203,6 @@ page 50102 "NVR Invoice List"
             InvoiceRecord.Modify();
         end;
     end;
-
 }
 //we need to add a listpart where we can see all the payments made to the specific invoice selected on the List page.
 //an invoice status is determined by if the payments correspond to the invoice amount due. So if the amount due is 6000 then the payments (one or more) need to equivilate to the amount due of 6000 in order to make the status paid. This will mean that the Invoice status must not be editable by the user.

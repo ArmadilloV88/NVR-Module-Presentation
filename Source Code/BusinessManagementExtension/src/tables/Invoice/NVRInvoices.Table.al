@@ -3,7 +3,7 @@ table 50102 "NVR Invoices"
     DataClassification = CustomerContent;
     Caption = 'Invoices', MaxLength = 30;
     TableType = Normal;
-    
+
     fields
     {
         field(501021; InvoiceID; Code[20])
@@ -102,23 +102,44 @@ table 50102 "NVR Invoices"
         }
     }
 
-    trigger OnInsert()
-    begin
-        // No automatic calculation of RemAmtToBePaidToInvoice here
-    end;
+    
+        Trigger OnInsert()
+        var
+            SalesOrderStatusUpdater: Codeunit "NVR Sales Order Status Updater";
+            //SalesOrderRecord: Record "NVR Sales Orders";
+        begin
+            // Trigger the update for the related sales order
+            //SalesOrderRecord.Get(Rec.SalesOrderID);
+            SalesOrderStatusUpdater.UpdateSalesOrderStatus(UpdateSalesOrderStatusByID(Rec.SalesOrderID));
+        end;
 
-    trigger OnModify()
-    begin
-        
-    end;
+        Trigger OnModify()
+        var
+            SalesOrderStatusUpdater: Codeunit "NVR Sales Order Status Updater";
+        begin
+            // Trigger the update for the related sales order
+            SalesOrderStatusUpdater.UpdateSalesOrderStatus(UpdateSalesOrderStatusByID(Rec.SalesOrderID));
+        end;
 
-    trigger OnDelete()
-    begin
-        // No automatic calculation of RemAmtToBePaidToInvoice here
-    end;
-
-    trigger OnRename()
-    begin
-        // No automatic calculation of RemAmtToBePaidToInvoice here
-    end;
+        Trigger OnDelete()
+        var
+            SalesOrderStatusUpdater: Codeunit "NVR Sales Order Status Updater";
+        begin
+            // Trigger the update for the related sales order
+            SalesOrderStatusUpdater.UpdateSalesOrderStatus(UpdateSalesOrderStatusByID(Rec.SalesOrderID));
+        end;
+        local procedure UpdateSalesOrderStatusByID(SalesOrderID: Code[20]) : Record "NVR Sales Orders"
+        var
+            SalesOrderRecord: Record "NVR Sales Orders";
+            SalesOrderStatusUpdater: Codeunit "NVR Sales Order Status Updater";
+        begin
+            // Retrieve the sales order record based on the SalesOrderID
+            if SalesOrderRecord.Get(SalesOrderID) then begin
+                // Update the sales order status using the codeunit
+                exit(SalesOrderRecord); // Return the updated sales order record
+            end else begin
+                // Handle the case where the sales order is not found
+                Error('Sales Order with ID %1 not found.', SalesOrderID);
+            end;
+        end;
 }
