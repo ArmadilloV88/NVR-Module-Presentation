@@ -51,7 +51,7 @@ page 50102 "NVR Invoice List"
                     Caption = 'Status';
                     ApplicationArea = All;
                     Editable = false; // Status is non-editable
-                    StyleExpr = StatusStyle; // Bind to the StatusStyle variable
+                    StyleExpr = Rec.StatusStyle; // Bind to the StatusStyle field in the table
                 }
             }
             part(PaymentsListPart; "NVR Payment ListPart")
@@ -135,21 +135,12 @@ page 50102 "NVR Invoice List"
                     UpdateInvoiceStatusAndRemainingAmount(InvoiceRecord.InvoiceID);
                 end;
             }
-            action(NewPayment)
-            {
-                Caption = 'New Payment';
-                Image = Payment;
-                ApplicationArea = All;
-                trigger OnAction()
-                begin
-                    Page.RunModal(Page::"NVR Payment Card");
-                end;
-            }
         }
     }
 
     var
         StatusStyle: Text;
+        SelectedInvoice: Record "NVR Invoices"; // Variable to store the currently selected invoice
 
     procedure GenerateUniqueInvoiceID(): Code[20]
     var
@@ -167,12 +158,18 @@ page 50102 "NVR Invoice List"
     end;
 
     trigger OnAfterGetCurrRecord()
+    var
+        PaymentsListPartPage: Page "NVR Payment ListPart";
     begin
-        // Update the invoice status and remaining amount when the record is loaded
-        UpdateInvoiceStatusAndRemainingAmount(Rec.InvoiceID);
+        // Assign the current record to SelectedInvoice
+        SelectedInvoice := Rec;
 
-        // Update the StatusStyle variable based on the current status
-        StatusStyle := GetStatusStyle();
+        // Debugging messages to verify the assignment
+        //Message('Current Record Invoice ID: %1', Rec.InvoiceID); // Debugging message
+        //Message('Selected Invoice ID in Invoice List Page: %1', SelectedInvoice.InvoiceID); // Debugging message
+
+        // Pass the SelectedInvoice to the Payment ListPart
+        CurrPage.PaymentsListPart.PAGE.SetSelectedInvoice(SelectedInvoice);
     end;
 
     procedure UpdateInvoiceStatusAndRemainingAmount(InvoiceID: Code[20])
@@ -204,33 +201,22 @@ page 50102 "NVR Invoice List"
                 RemainingAmount := 0;
 
             // Update the invoice status based on the remaining amount
-            if RemainingAmount <= Tolerance then
-                Rec.Status := Enum::"NVR PaymentStatusEnum"::Paid
-            else if TotalPayments = 0 then
-                Rec.Status := Enum::"NVR PaymentStatusEnum"::NotPaid
-            else
-                Rec.Status := Enum::"NVR PaymentStatusEnum"::PartiallyPaid;
+            if RemainingAmount <= Tolerance then begin
+                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::Paid;
+                InvoiceRecord.StatusStyle := 'Favorable'; // Green for Paid
+            end else if TotalPayments = 0 then begin
+                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::NotPaid;
+                InvoiceRecord.StatusStyle := 'UnFavorable'; // Red for Not Paid
+            end else begin
+                InvoiceRecord.Status := Enum::"NVR PaymentStatusEnum"::PartiallyPaid;
+                InvoiceRecord.StatusStyle := 'Attention'; // Orange for Partially Paid
+            end;
 
-            // Update the remaining amount in the current record
-            Rec."RemAmtToBePaidToInvoice" := RemainingAmount;
-
-            // Do not modify the record here to avoid conflicts
+            // Save the updated invoice record
+            InvoiceRecord.Modify();
         end;
     end;
 
-    procedure GetStatusStyle(): Text
-    begin
-        case Rec.Status of
-            Enum::"NVR PaymentStatusEnum"::Paid:
-                exit('Positive'); // Green for Paid
-            Enum::"NVR PaymentStatusEnum"::NotPaid:
-                exit('Negative'); // Red for Not Paid
-            Enum::"NVR PaymentStatusEnum"::PartiallyPaid:
-                exit('Attention'); // Yellow for Partially Paid
-            else
-                exit('');
-        end;
-    end;
 }
 //we need to add a listpart where we can see all the payments made to the specific invoice selected on the List page.
 //an invoice status is determined by if the payments correspond to the invoice amount due. So if the amount due is 6000 then the payments (one or more) need to equivilate to the amount due of 6000 in order to make the status paid. This will mean that the Invoice status must not be editable by the user.

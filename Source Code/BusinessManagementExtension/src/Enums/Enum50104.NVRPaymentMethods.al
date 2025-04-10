@@ -1,10 +1,6 @@
 enum 50104 "NVR PaymentMethods"
 {
     Extensible = true;
-    value(0; "Credit Card")
-    {
-        Caption = 'Credit Card';
-    }
     value(1; "Bank Transfer")
     {
         Caption = 'Bank Transfer';
@@ -25,8 +21,12 @@ enum 50104 "NVR PaymentMethods"
     {
         Caption = 'Debit Card';
     }
-    value(6; "Unknown")
+    value(6; "Credit Card")
     {
-        Caption = 'Unknown';
+        Caption = 'Credit Card';
+    }
+    value(7; "Other")
+    {
+        Caption = 'Other';
     }
 }

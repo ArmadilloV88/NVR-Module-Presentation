@@ -51,11 +51,25 @@ table 50102 "NVR Invoices"
         }
         field(501027; Status; Enum "NVR PaymentStatusEnum")
         {
-            InitValue = 0; // Unpaid
             DataClassification = CustomerContent;
             Caption = 'Payment Status';
             NotBlank = true;
-            Editable = true;
+            Editable = false; // Make this field non-editable by the user
+
+            trigger OnValidate()
+            begin
+                // Dynamically calculate the StatusStyle whenever the Status changes
+                case Status of
+                    Enum::"NVR PaymentStatusEnum"::Paid:
+                        StatusStyle := 'Favorable'; // Green for Paid
+                    Enum::"NVR PaymentStatusEnum"::NotPaid:
+                        StatusStyle := 'UnFavorable'; // Red for Not Paid
+                    Enum::"NVR PaymentStatusEnum"::PartiallyPaid:
+                        StatusStyle := 'Attention'; // Orange for Partially Paid
+                    else
+                        StatusStyle := ''; // Default style
+                end;
+            end;
         }
         field(501028; AmountPaid; Decimal)
         {
@@ -68,6 +82,12 @@ table 50102 "NVR Invoices"
             DataClassification = CustomerContent;
             Caption = 'Remaining Amount to Be Paid';
             Editable = false; // Make this field non-editable
+        }
+        field(501030; StatusStyle; Text[30])
+        {
+            Caption = 'Status Style';
+            Editable = false; // This field is calculated and not editable
+            DataClassification = ToBeClassified;
         }
     }
     keys
@@ -89,7 +109,7 @@ table 50102 "NVR Invoices"
 
     trigger OnModify()
     begin
-        // Remove automatic calculation of RemAmtToBePaidToInvoice
+        
     end;
 
     trigger OnDelete()

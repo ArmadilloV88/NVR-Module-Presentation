@@ -20,7 +20,7 @@ page 50113 "NVR Payment Card"
                 {
                     Caption = 'Invoice ID';
                     ApplicationArea = All;
-                    Editable = true;
+                    Editable = false;
                     TableRelation = "NVR Invoices".InvoiceID;
                     trigger OnValidate()
                     var
@@ -124,7 +124,7 @@ page 50113 "NVR Payment Card"
                 end;
             }
 
-            action(DeletePayment)
+            /*action(DeletePayment)
             {
                 Caption = 'Delete Payment';
                 ApplicationArea = All;
@@ -146,7 +146,7 @@ page 50113 "NVR Payment Card"
                         Close();
                     end;
                 end;
-            }
+            }*/
 
             action(Cancel)
             {
@@ -179,6 +179,7 @@ page 50113 "NVR Payment Card"
     var
         InvoiceRecord: Record "NVR Invoices";
     begin
+        //Message('(Payment Card) Invoice ID : %1', Rec.InvoiceID);
         // Initialize RemainingAmt based on the selected Invoice ID
         if Rec.InvoiceID <> '' then begin
             if InvoiceRecord.Get(Rec.InvoiceID) then
