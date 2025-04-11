@@ -14,7 +14,7 @@ codeunit 50112 "NVR Loyalty Points Handler"
             until CustomerRecord.Next() = 0;
     end;
 
-    procedure CalculateLoyaltyPoints(CustomerRecord: Record "NVR Customers") : Record "NVR Customers"
+    procedure CalculateLoyaltyPoints(CustomerRecord: Record "NVR Customers"): Record "NVR Customers"
     var
         SalesOrderRecord: Record "NVR Sales Orders";
         InvoiceRecord: Record "NVR Invoices";
@@ -37,38 +37,44 @@ codeunit 50112 "NVR Loyalty Points Handler"
                     until InvoiceRecord.Next() = 0;
 
                 // Check if the sales order is fully paid
-                if TotalAmountPaid >= SalesOrderRecord."TotalAmount" then
-                    LoyaltyPoints += Round(SalesOrderRecord."TotalAmount", 1); // Add the total amount as points
+                if TotalAmountPaid >= SalesOrderRecord."TotalAmount" then begin
+                    //Message('Sales Order %1 is fully paid. Awarding 1 point.', SalesOrderRecord."SalesOrderID");
+                    LoyaltyPoints += 1; // Award 1 point per fully paid sales order
+                end else begin
+                    //Message('Sales Order %1 is not fully paid. No points awarded.', SalesOrderRecord."SalesOrderID");
+                end;
             until SalesOrderRecord.Next() = 0;
 
         // Update the customer's loyalty points
-        CustomerRecord."Loyalty Points" := LoyaltyPoints;
+        if (CustomerRecord."Loyalty Points" <> LoyaltyPoints) then begin
+            CustomerRecord."Loyalty Points" := LoyaltyPoints;
 
-        // Determine the loyalty level based on points
-        if (LoyaltyPoints >= 1) and (LoyaltyPoints <= 5) then
-            LoyaltyLevel := LoyaltyLevel::"Level 1"
-        else if (LoyaltyPoints >= 6) and (LoyaltyPoints <= 11) then
-            LoyaltyLevel := LoyaltyLevel::"Level 2"
-        else if (LoyaltyPoints >= 12) and (LoyaltyPoints <= 17) then
-            LoyaltyLevel := LoyaltyLevel::"Level 3"
-        else if (LoyaltyPoints >= 18) and (LoyaltyPoints <= 23) then
-            LoyaltyLevel := LoyaltyLevel::"Level 4"
-        else if (LoyaltyPoints >= 24) and (LoyaltyPoints <= 29) then
-            LoyaltyLevel := LoyaltyLevel::"Level 5"
-        else if (LoyaltyPoints >= 30) and (LoyaltyPoints <= 35) then
-            LoyaltyLevel := LoyaltyLevel::"Level 6"
-        else if (LoyaltyPoints >= 36) and (LoyaltyPoints <= 41) then
-            LoyaltyLevel := LoyaltyLevel::"Level 7"
-        else if (LoyaltyPoints >= 42) and (LoyaltyPoints <= 47) then
-            LoyaltyLevel := LoyaltyLevel::"Level 8"
-        else if (LoyaltyPoints >= 48) and (LoyaltyPoints <= 53) then
-            LoyaltyLevel := LoyaltyLevel::"Level 9"
-        else if (LoyaltyPoints) >= 54 then
-            LoyaltyLevel := LoyaltyLevel::"Level 10";
+            // Determine the loyalty level based on points
+            if (LoyaltyPoints >= 1) and (LoyaltyPoints <= 5) then
+                LoyaltyLevel := LoyaltyLevel::"Level 1"
+            else if (LoyaltyPoints >= 6) and (LoyaltyPoints <= 11) then
+                LoyaltyLevel := LoyaltyLevel::"Level 2"
+            else if (LoyaltyPoints >= 12) and (LoyaltyPoints <= 17) then
+                LoyaltyLevel := LoyaltyLevel::"Level 3"
+            else if (LoyaltyPoints >= 18) and (LoyaltyPoints <= 23) then
+                LoyaltyLevel := LoyaltyLevel::"Level 4"
+            else if (LoyaltyPoints >= 24) and (LoyaltyPoints <= 29) then
+                LoyaltyLevel := LoyaltyLevel::"Level 5"
+            else if (LoyaltyPoints >= 30) and (LoyaltyPoints <= 35) then
+                LoyaltyLevel := LoyaltyLevel::"Level 6"
+            else if (LoyaltyPoints >= 36) and (LoyaltyPoints <= 41) then
+                LoyaltyLevel := LoyaltyLevel::"Level 7"
+            else if (LoyaltyPoints >= 42) and (LoyaltyPoints <= 47) then
+                LoyaltyLevel := LoyaltyLevel::"Level 8"
+            else if (LoyaltyPoints >= 48) and (LoyaltyPoints <= 53) then
+                LoyaltyLevel := LoyaltyLevel::"Level 9"
+            else if (LoyaltyPoints >= 54) then
+                LoyaltyLevel := LoyaltyLevel::"Level 10";
 
-        // Update the customer's loyalty level
-        CustomerRecord."Loyalty Level" := LoyaltyLevel.AsInteger();
-        CustomerRecord.Modify();
+            CustomerRecord."Loyalty Level" := LoyaltyLevel.AsInteger();
+            CustomerRecord.Modify();
+        end;
+
         exit(CustomerRecord);
     end;
 }

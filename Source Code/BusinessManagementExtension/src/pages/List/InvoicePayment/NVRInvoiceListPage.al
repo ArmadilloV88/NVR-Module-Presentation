@@ -45,6 +45,14 @@ page 50102 "NVR Invoice List"
                     Caption = 'Currency';
                     ApplicationArea = All;
                     Editable = false;
+                    //doesnt display correctly
+                }
+                Field("NVR Amount Paid"; Rec.AmountPaid)
+                {
+                    Caption = 'Amount Paid';
+                    ApplicationArea = All;
+                    Editable = false;
+
                 }
                 field("NVR Status"; Rec.Status)
                 {
@@ -117,7 +125,7 @@ page 50102 "NVR Invoice List"
                 begin
                     Page.RunModal(Page::"NVR Payment List");
                 end;
-            }
+            }//might get removed
         }
         area(Creation)
         {
@@ -158,8 +166,26 @@ page 50102 "NVR Invoice List"
     begin
         // Pass the current record to the Payment ListPart
         CurrPage.PaymentsListPart.PAGE.SetSelectedInvoice(Rec);
+        UpdateTheAmountPaid();
+
     end;
 
+    procedure UpdateTheAmountPaid()
+    var
+        InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
+        UpdatedAmountPaid: Decimal;
+        Invoices : Record "NVR Invoices";
+    begin
+        if Rec.InvoiceID = '' then
+            Error('No Invoice is selected. Please select an invoice to view.');
+        if Invoices.Get(Rec.InvoiceID) then begin
+            // Update the invoice amount paid using the Codeunit
+            UpdatedAmountPaid := InvoiceHandler.UpdateInvoiceAmountPaid(Rec.InvoiceID);
+            Rec.AmountPaid := UpdatedAmountPaid;
+            Rec.Modify(true); // Save the changes to the record
+        end else
+            Error('Invoice with ID %1 not found.', Rec.InvoiceID);
+    end;
     procedure UpdateInvoiceStatusAndRemainingAmount(InvoiceID: Code[20])
     var
         InvoiceRecord: Record "NVR Invoices";

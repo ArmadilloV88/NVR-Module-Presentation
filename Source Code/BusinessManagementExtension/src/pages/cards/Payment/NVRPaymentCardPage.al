@@ -95,6 +95,9 @@ page 50113 "NVR Payment Card"
                     DecimalPlaces = 2;
                     Editable = false;
                 }
+                field("NVR Amount Paid"; InvoiceAmountPaid){
+
+                }
             }
         }
     }
@@ -179,6 +182,7 @@ page 50113 "NVR Payment Card"
     var
         InvoiceRecord: Record "NVR Invoices";
     begin
+        InvoiceAmountPaid := GetInvoicePaidAmount(Rec.InvoiceID);
         //Message('(Payment Card) Invoice ID : %1', Rec.InvoiceID);
         // Initialize RemainingAmt based on the selected Invoice ID
         if Rec.InvoiceID <> '' then begin
@@ -186,6 +190,25 @@ page 50113 "NVR Payment Card"
                 RemainingAmt := InvoiceRecord."RemAmtToBePaidToInvoice"
             else
                 RemainingAmt := 0;
+        end;
+    end;
+
+    procedure GetInvoicePaidAmount(InvoiceID: Code[20]) : Decimal
+    var 
+        InvoiceRecord: Record "NVR Invoices";
+        PaymentRecord: Record "NVR Payments";
+        AmountPaid: Decimal;
+    begin
+        if InvoiceRecord.Get(InvoiceID) then begin
+            // Initialize the total payments
+            AmountPaid := 0;
+            
+            AmountPaid := InvoiceRecord."AmountPaid";
+
+            // Return the total payments made to the invoice
+            exit(AmountPaid);
+        end else begin
+            exit(0); // Return 0 if the invoice record is not found
         end;
     end;
 
@@ -229,5 +252,6 @@ page 50113 "NVR Payment Card"
 
     var
         RemainingAmt: Decimal;
+        InvoiceAmountPaid: Decimal;
 }
 //weird bug with the payment method, if the payment method is credit card it complains however anything else is fine

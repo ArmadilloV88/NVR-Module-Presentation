@@ -27,7 +27,7 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
         NewInvoice."SalesOrderID" := StoredSalesOrderID;
         NewInvoice.Insert(true);
 
-        Message('New Invoice Created: %1 for Sales Order ID: %2', NewInvoice."InvoiceID", StoredSalesOrderID);
+        //Message('New Invoice Created: %1 for Sales Order ID: %2', NewInvoice."InvoiceID", StoredSalesOrderID);
         exit(NewInvoice);
     end;
 
@@ -51,7 +51,7 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
             InvoiceToEdit."InvoiceAmount" := NewInvoiceAmount;
             InvoiceToEdit.Modify(true);
 
-            Message('Invoice Updated: %1 with New Amount: %2', InvoiceID, Format(NewInvoiceAmount));
+            //Message('Invoice Updated: %1 with New Amount: %2', InvoiceID, Format(NewInvoiceAmount));
         end else
             Error('Invoice with ID %1 not found.', InvoiceID);
     end;
@@ -69,6 +69,31 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
         until not TempInvoiceRecord.Get(NewID);
 
         exit(NewID);
+    end;
+
+    procedure UpdateInvoiceAmountPaid(InvoiceID: Code[20]) : Decimal
+    var
+        InvoiceToUpdate: Record "NVR Invoices";
+        PaymentRecord: Record "NVR Payments";
+        TotalPayments: Decimal;
+    begin
+        if InvoiceToUpdate.Get(InvoiceID) then begin
+            // Initialize total payments
+            TotalPayments := 0;
+
+            // Sum all payments made to the invoice
+            PaymentRecord.SetRange("InvoiceID", InvoiceID);
+            if PaymentRecord.FindSet() then
+                repeat
+                    TotalPayments += PaymentRecord."PaymentAmount";
+                until PaymentRecord.Next() = 0;
+
+            exit(TotalPayments);
+
+            //Message('Invoice Amount Paid Updated: %1', Format(TotalPayments));
+        end else
+            Error('Invoice with ID %1 not found.', InvoiceID);
+
     end;
 
     procedure GetStoredSalesOrderID(): Code[20]

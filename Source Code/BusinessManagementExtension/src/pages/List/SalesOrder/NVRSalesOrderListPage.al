@@ -131,7 +131,7 @@ page 50108 "NVR Sales Order List"
                     InvoiceHelper.SetInvoiceSalesOrderID(Rec);
 
                     // Debugging message to confirm the Sales Order ID is set
-                    Message('Sales Order ID Passed to Codeunit: %1', Rec.SalesOrderID);
+                    //Message('Sales Order ID Passed to Codeunit: %1', Rec.SalesOrderID);
 
                     // Open the Invoice List Page
                     Page.RunModal(Page::"NVR Invoice List");
@@ -150,8 +150,8 @@ page 50108 "NVR Sales Order List"
     trigger OnAfterGetCurrRecord()
     begin
         // Ensure Rec is updated when a record is selected
-        if Rec.SalesOrderID <> '' then
-            Message('Current Record Sales Order ID: %1', Rec.SalesOrderID); // Debugging message
+        //if Rec.SalesOrderID <> '' then
+            //Message('Current Record Sales Order ID: %1', Rec.SalesOrderID); // Debugging message
         //CurrPage.Update(); // Refresh the page to reflect the selected record
     end;
 
