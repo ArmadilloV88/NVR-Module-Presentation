@@ -21,7 +21,7 @@ page 50112 "NVR Invoice Document"
                 {
                     Caption = 'Sales Order ID';
                     ApplicationArea = All;
-                    Editable = true;
+                    Editable = false;
                     NotBlank = true;
                     TableRelation = "NVR Sales Orders".SalesOrderID;
                     trigger OnValidate()

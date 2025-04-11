@@ -1,5 +1,7 @@
 codeunit 50104 "NVR InvoiceSalesOrderHandler"
 {
+
+    SingleInstance = true;
     var
         InvoiceRec: Record "NVR Invoices";
         StoredSalesOrderID: Code[20]; // Variable to store the SalesOrderID
@@ -8,13 +10,14 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
     begin
         // Store the SalesOrderID for later use
         StoredSalesOrderID := SalesOrderRecord."SalesOrderID";
-        Message('Sales Order ID Stored in Codeunit: %1', StoredSalesOrderID);
+        //Message('Sales Order ID Stored in Codeunit: %1', StoredSalesOrderID);
     end;
 
     procedure AddNewInvoice(): Record "NVR Invoices"
     var
         NewInvoice: Record "NVR Invoices";
     begin
+        //Message('Sales Order for gen ID: %1', StoredSalesOrderID);
         if StoredSalesOrderID = '' then
             Error('No Sales Order ID is stored. Please set the Sales Order ID first.');
 
@@ -34,7 +37,7 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
     begin
         if InvoiceToDelete.Get(InvoiceID) then begin
             InvoiceToDelete.Delete();
-            Message('Invoice Deleted: %1', InvoiceID);
+            //Message('Invoice Deleted: %1', InvoiceID);
         end else
             Error('Invoice with ID %1 not found.', InvoiceID);
     end;

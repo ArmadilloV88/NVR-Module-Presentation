@@ -78,8 +78,8 @@ page 50102 "NVR Invoice List"
                     if Rec.InvoiceID = '' then
                         Error('No Invoice is selected. Please select an invoice to edit.');
 
-                    // Edit the invoice using the Codeunit
-                    InvoiceHandler.EditInvoice(Rec.InvoiceID, Rec.InvoiceAmount);
+                    
+                    Page.RunModal(Page::"NVR Invoice Document", Rec);
 
                     // Update the invoice status and remaining amount after editing
                     UpdateInvoiceStatusAndRemainingAmount(Rec.InvoiceID);
@@ -133,8 +133,9 @@ page 50102 "NVR Invoice List"
                 begin
                     // Add a new invoice using the Codeunit
                     NewInvoice := InvoiceHandler.AddNewInvoice();
-                    Message('New Invoice Created: %1 SalesOrderID : %2' , NewInvoice.InvoiceID, NewInvoice.SalesOrderID);
+                    //Message('New Invoice Created: %1 SalesOrderID : %2' , NewInvoice.InvoiceID, NewInvoice.SalesOrderID);
                     
+                    Commit(); // Commit the changes to the database
 
                     // Open the Invoice Document page with the new Invoice ID
                     Page.RunModal(Page::"NVR Invoice Document", NewInvoice);
@@ -142,7 +143,7 @@ page 50102 "NVR Invoice List"
                     // Update the invoice status and remaining amount after creating a new invoice
                     UpdateInvoiceStatusAndRemainingAmount(NewInvoice.InvoiceID);
 
-                    Message('New Invoice %1 has been created successfully.', NewInvoice.InvoiceID);
+                    //Message('New Invoice %1 has been created successfully.', NewInvoice.InvoiceID);
                 end;
             }
         }

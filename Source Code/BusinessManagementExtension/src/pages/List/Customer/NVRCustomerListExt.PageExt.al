@@ -34,7 +34,7 @@ pageextension 50113 "NVR Customer List Ext" extends "NVR Customer List"
                 var
                     LoyaltyHandler: Codeunit "NVR Loyalty Points Handler";
                 begin
-                    LoyaltyHandler.UpdateAllCustomers();
+                    Rec:= LoyaltyHandler.CalculateLoyaltyPoints(Rec);
                     Message('Loyalty points and levels have been updated for all customers.');
                 end;
             }
@@ -42,12 +42,19 @@ pageextension 50113 "NVR Customer List Ext" extends "NVR Customer List"
     }
 
     local procedure GetLoyaltyPoints(): Integer
+    var 
+        CustomerLoyaltyCalc : Codeunit "NVR Loyalty Points Handler";
+        CalcLoyaltyPoint : Record "NVR Customers";
     begin
-
+        CalcLoyaltyPoint := CustomerLoyaltyCalc.CalculateLoyaltyPoints(Rec);
+        exit(CalcLoyaltyPoint."Loyalty Points");
     end;
     local procedure GetLoyaltyLevel(): Enum "NVR Loyalty Level"
+    var 
+        CustomerLoyaltyCalc : Codeunit "NVR Loyalty Points Handler";
+        CalcLoyaltyLevel : Record "NVR Customers";
     begin
-        //needs to return enum
+         CalcLoyaltyLevel := CustomerLoyaltyCalc.CalculateLoyaltyPoints(Rec);
+         exit(CalcLoyaltyLevel."Loyalty Level");
     end;
-    
 }
