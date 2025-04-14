@@ -53,15 +53,11 @@ table 50107 "NVR SalesOrderLineProducts"
                 ValidateProductTotalAgainstSalesOrder();
             end;
         }
-        field(501076; "Line Amount"; Decimal)
+        field(501076; "Product Total Amount"; Decimal)
         {
             DataClassification = CustomerContent;
             Caption = 'Total Price';
             Editable = false;
-            trigger OnValidate()
-            begin
-                "Line Amount" := Quantity * "Unit Price"; // Automatically calculate the total price
-            end;
         }
     }
 

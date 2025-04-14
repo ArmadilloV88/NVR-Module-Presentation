@@ -31,9 +31,9 @@ page 50109 "NVR Sls. Ord. Line Prdt."
                     Editable = false;
                 }
 
-                field("Line Amount"; Rec."Line Amount")
+                field("Product Total Amount"; Rec."Product Total Amount")
                 {
-                    Caption = 'Line Amount';
+                    Caption = 'Product Total Amount';
                     ApplicationArea = All;
                     Editable = false;
                 }
@@ -89,7 +89,7 @@ page 50109 "NVR Sls. Ord. Line Prdt."
 
                             if SalesOrderLineProducts.FindSet() then
                                 repeat
-                                    SalesOrderLine."Line Amount" += SalesOrderLineProducts."Line Amount";
+                                    SalesOrderLine."Line Amount" += SalesOrderLineProducts."Product Total Amount";
                                 until SalesOrderLineProducts.Next() = 0;
 
                             SalesOrderLine.Modify(); // Save the updated Sales Order Line
@@ -123,7 +123,7 @@ page 50109 "NVR Sls. Ord. Line Prdt."
     begin
         if Product.Get(Rec.ProductID) then begin
             Rec."Unit Price" := Product."UnitPrice";
-            Rec."Line Amount" := Rec.Quantity * Rec."Unit Price";
+            Rec."Product Total Amount" := Rec.Quantity * Rec."Unit Price";
         end;
     end;
 }

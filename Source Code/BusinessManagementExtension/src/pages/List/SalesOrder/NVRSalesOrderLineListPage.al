@@ -17,13 +17,6 @@ page 50104 "NVR Sales Order Line List"
                     Editable = false;
                 }
 
-                field("NVR Sales Order ID"; Rec.SalesOrderID)
-                {
-                    Caption = 'Sales Order ID';
-                    ApplicationArea = All;
-                    Editable = false;
-                }
-
                 field("NVR Current Amount"; Rec."Line Amount")
                 {
                     Caption = 'Current Line Amount';
@@ -35,16 +28,22 @@ page 50104 "NVR Sales Order Line List"
                 {
                     Caption = 'Line Max. Budget';
                     ApplicationArea = All;
-                    Editable = false; // This field is calculated and should not be editable
+                    Editable = false;
                 }
 
-                field("NVR Remaining Budget"; RemainingBudget)
+                field("NVR Remaining Budget"; RemainingLineBudget)
                 {
-                    Caption = 'Remaining Budget';
+                    Caption = 'Remaining Line Budget';
                     ApplicationArea = All;
-                    Editable = false; // This field is calculated and should not be editable
-                    Style = Unfavorable; // Red text
-                    StyleExpr = IsOverBudget; // Apply style if over budget
+                    Editable = false;
+                    Style = Unfavorable;
+                    StyleExpr = IsOverBudget;
+                }
+                field("NVR Remaining Sales Order Amount"; CalculateLineRemainingAmount(Rec."Line Amount", LineMaxBudget))
+                {
+                    Caption = 'Remaining Sales Order Amount';
+                    ApplicationArea = All;
+                    Editable = false;
                 }
             }
             part(SalesOrderLineProductsPart; "NVR Sls. Ord. Line Prdt.")
@@ -66,20 +65,42 @@ page 50104 "NVR Sales Order Line List"
                 Image = New;
                 ApplicationArea = All;
                 trigger OnAction()
+                var
+                    SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+                    CanAdd: Boolean;
                 begin
+                    // Ensure a valid Sales Order is selected
+                    if Rec.SalesOrderID = '' then
+                        Rec.SalesOrderID := SalesOrderLineHandler.GetSalesOrderID(); // Get the Sales Order ID from the handler
+
+                    // Check if a new line can be added
+                    CanAdd := SalesOrderLineHandler.CanAddMore(Rec.SalesOrderID);
+                    // if not CanAdd then
+                    //     Error('Cannot add more lines to this Sales Order. The total line amount exceeds the sales order total amount.');
+
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+
+                    // Open the Sales Order Line Card page
                     Page.RunModal(Page::"NVR Sales Order Line Card");
                 end;
             }
             action(ViewSalesOrderLine)
             {
-                Caption = 'View Sales Order Line';
-                Image = View;
+                Caption = 'Edit Sales Order Line';
+                Image = Edit;
                 ApplicationArea = All;
                 trigger OnAction()
                 begin
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+                    // Open the Sales Order Line Card page
                     Page.RunModal(Page::"NVR Sales Order Line Card", Rec);
                 end;
             }
+
             action(AddProduct)
             {
                 Caption = 'Add Product to Order Line';
@@ -141,42 +162,278 @@ page 50104 "NVR Sales Order Line List"
     var
         TotalLineAmount: Decimal;
         LineMaxBudget: Decimal;
-        RemainingBudget: Decimal;
+        RemainingLineBudget: Decimal;
         IsOverBudget: Boolean;
+
+    trigger OnOpenPage()
+    var
+        SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+        FilteredSalesOrderID: Code[20];
+    begin
+        // Get the Sales Order ID from the handler
+        FilteredSalesOrderID := SalesOrderLineHandler.GetSalesOrderID();
+
+        // Apply the filter only if a valid Sales Order ID is returned
+        if FilteredSalesOrderID <> '' then
+            Rec.SetRange(SalesOrderID, FilteredSalesOrderID)
+        else
+            Error('No valid Sales Order ID found. Please ensure a Sales Order is selected.');
+    end;
 
     trigger OnAfterGetRecord()
     begin
         RecalculateSalesOrderLine();
     end;
 
+    procedure CalculateLineRemainingAmount(CurrentAmount: Decimal; MaxAmount: Decimal): Decimal
+    begin
+        exit(MaxAmount - CurrentAmount);    
+    end;
+
     procedure RecalculateSalesOrderLine()
     var
-        SalesOrder: Record "NVR Sales Orders";
         SalesOrderLineProducts: Record "NVR SalesOrderLineProducts";
+        TotalLineAmount: Decimal;
+        SalesOrder : Record "NVR Sales Orders";
     begin
         TotalLineAmount := 0; // Reset the total
         LineMaxBudget := 0; // Reset the max budget
-        RemainingBudget := 0; // Reset the remaining budget
+        RemainingLineBudget := 0; // Reset the remaining budget
 
         // Sum up the Line Amount from related products
         SalesOrderLineProducts.SetRange("Sales Order Line ID", Rec."Sales Order Line ID");
         if SalesOrderLineProducts.FindSet() then
             repeat
-                TotalLineAmount += SalesOrderLineProducts."Line Amount";
+                TotalLineAmount += SalesOrderLineProducts."Product Total Amount";
             until SalesOrderLineProducts.Next() = 0;
 
-        Rec."Line Amount" := TotalLineAmount; // Update the Line Amount field with the calculated total
-
-        // Fetch the total amount from the Sales Order table
+        // Calculate values without modifying the record
         if SalesOrder.Get(Rec.SalesOrderID) then
-            LineMaxBudget := SalesOrder."TotalAmount"; // Assign the total amount to the LineMaxBudget variable
+            LineMaxBudget := SalesOrder."TotalAmount";
 
-        // Calculate the remaining budget
-        RemainingBudget := LineMaxBudget - TotalLineAmount;
-
-        // Determine if the current sales order line is over budget
+        RemainingLineBudget := LineMaxBudget - TotalLineAmount;
         IsOverBudget := TotalLineAmount > LineMaxBudget;
     end;
 }
+/*Requires Further Testing and better refinement*/
+//Needs better logic overlay and refinement - Need to work with budget distribution to each sales order line
+
+
+
+/*page 50104 "NVR Sales Order Line List"
+{
+    Caption = 'Sales Order Line List';
+    PageType = List;
+    SourceTable = "NVR Sales Order Line";
+
+    layout
+    {
+        area(content)
+        {
+            repeater(SalesOrderLines)
+            {
+                field("NVR Sales Order Line ID"; Rec."Sales Order Line ID")
+                {
+                    Caption = 'Sales Order Line ID';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+
+                field("NVR Current Amount"; Rec."Line Amount")
+                {
+                    Caption = 'Current Line Amount';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+
+                field("NVR Line Budget"; LineMaxBudget)
+                {
+                    Caption = 'Line Max. Budget';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+
+                field("NVR Remaining Budget"; RemainingLineBudget)
+                {
+                    Caption = 'Remaining Line Budget';
+                    ApplicationArea = All;
+                    Editable = false;
+                    Style = Unfavorable;
+                    StyleExpr = IsOverBudget;
+                }
+            }
+            part(SalesOrderLineProductsPart; "NVR Sls. Ord. Line Prdt.")
+            {
+                SubPageLink = "Sales Order Line ID" = field("Sales Order Line ID");
+                ApplicationArea = All;
+                Editable = false;
+            }
+        }
+    }
+
+    actions
+    {
+        area(navigation)
+        {
+            action(NewSalesOrderLine)
+            {
+                Caption = 'New Sales Order Line';
+                Image = New;
+                ApplicationArea = All;
+                trigger OnAction()
+                var
+                    SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+                    CanAdd: Boolean;
+                begin
+                    // Ensure a valid Sales Order is selected
+                    if Rec.SalesOrderID = '' then
+                        Error('Please select a valid Sales Order.');
+
+                    // Check if a new line can be added
+                    CanAdd := SalesOrderLineHandler.CanAddMore(Rec.SalesOrderID, Rec."Sales Order Line ID");
+                    if not CanAdd then
+                        Error('Cannot add more lines to this Sales Order. The total line amount exceeds the sales order total amount.');
+
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+                    // Open the Sales Order Line Card page
+                    Page.RunModal(Page::"NVR Sales Order Line Card");
+                end;
+            }
+
+            action(ViewSalesOrderLine)
+            {
+                Caption = 'Edit Sales Order Line';
+                Image = Edit;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+                    // Open the Sales Order Line Card page
+                    Page.RunModal(Page::"NVR Sales Order Line Card", Rec);
+                end;
+            }
+
+            action(AddProduct)
+            {
+                Caption = 'Add Product to Order Line';
+                Image = Add;
+                ApplicationArea = All;
+                trigger OnAction()
+                var
+                    ProductAdditionRecord: Record "NVR SalesOrderLineProducts";
+                begin
+                    // Check if the current budget exceeds the max budget
+                    if TotalLineAmount > LineMaxBudget then
+                        Error('Cannot add a product. The current budget (%1) exceeds the maximum budget (%2).', Format(TotalLineAmount), Format(LineMaxBudget));
+
+                    // Initialize a new record for the Product Addition page
+                    ProductAdditionRecord.Init();
+                    ProductAdditionRecord."Sales Order Line ID" := Rec."Sales Order Line ID";
+                    ProductAdditionRecord.Insert(false);
+
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+                    // Open the Product Addition page with the new record
+                    Page.RunModal(Page::"NVR Product Addition", ProductAdditionRecord);
+                end;
+            }
+        }
+
+        area(Processing)
+        {
+            action(ViewSalesOrder)
+            {
+                Caption = 'View Sales Order';
+                Image = View;
+                ApplicationArea = All;
+                trigger OnAction()
+                var
+                    SalesOrder: Record "NVR Sales Orders";
+                begin
+                    if SalesOrder.Get(Rec.SalesOrderID) then
+                        Page.RunModal(Page::"NVR Sales Order Card", SalesOrder)
+                    else
+                        Error('The Sales Order with ID %1 does not exist.', Rec.SalesOrderID);
+                end;
+            }
+
+            action(ViewProducts)
+            {
+                Caption = 'View Products';
+                Image = View;
+                ApplicationArea = All;
+                trigger OnAction()
+                begin
+                    Page.RunModal(Page::"NVR Product List");
+                end;
+            }
+        }
+    }
+
+    var
+        TotalLineAmount: Decimal;
+        LineMaxBudget: Decimal;
+        RemainingLineBudget: Decimal;
+        IsOverBudget: Boolean;
+
+    trigger OnAfterGetRecord()
+    begin
+        // Recalculate values without modifying the record
+        RecalculateSalesOrderLine();
+        CurrPage.Update(); // Refresh the page to reflect the updated values
+    end;
+
+    procedure UpdateRemainingAmount(): Decimal
+    var
+        SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+    begin
+        exit(SalesOrderLineHandler.GetRemainingDistibutionTotal(Rec.SalesOrderID));
+    end;
+
+    trigger OnOpenPage()
+    var
+        SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+        FilteredSalesOrderID: Code[20];
+    begin
+        // Get the Sales Order ID from the handler
+        FilteredSalesOrderID := SalesOrderLineHandler.GetSalesOrderID();
+
+        // Apply the filter only if a valid Sales Order ID is returned
+        if FilteredSalesOrderID <> '' then
+            Rec.SetRange(SalesOrderID, FilteredSalesOrderID)
+        else
+            Error('No valid Sales Order ID found. Please ensure a Sales Order is selected.');
+    end;
+
+    procedure RecalculateSalesOrderLine()
+    var
+        SalesOrderLineProducts: Record "NVR SalesOrderLineProducts";
+        TotalLineAmount: Decimal;
+        SalesOrder : Record "NVR Sales Orders";
+    begin
+        TotalLineAmount := 0; // Reset the total
+        LineMaxBudget := 0; // Reset the max budget
+        RemainingLineBudget := 0; // Reset the remaining budget
+
+        // Sum up the Line Amount from related products
+        SalesOrderLineProducts.SetRange("Sales Order Line ID", Rec."Sales Order Line ID");
+        if SalesOrderLineProducts.FindSet() then
+            repeat
+                TotalLineAmount += SalesOrderLineProducts."Product Total Amount";
+            until SalesOrderLineProducts.Next() = 0;
+
+        // Calculate values without modifying the record
+        if SalesOrder.Get(Rec.SalesOrderID) then
+            LineMaxBudget := SalesOrder."TotalAmount";
+
+        RemainingLineBudget := LineMaxBudget - TotalLineAmount;
+        IsOverBudget := TotalLineAmount > LineMaxBudget;
+    end;
+}*/
 /*Requires Further Testing and better refinement*/
 //Needs better logic overlay and refinement - Need to work with budget distribution to each sales order line
