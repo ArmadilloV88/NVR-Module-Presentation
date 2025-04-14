@@ -92,17 +92,22 @@ page 50108 "NVR Sales Order List"
                 ApplicationArea = All;
                 trigger OnAction()
                 var
-                    SalesOrderLineRecord: Record "NVR Sales Order Line";
+                    SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
                 begin
+                    // Ensure a valid Sales Order is selected
                     if Rec.SalesOrderID = '' then
                         Error('The Sales Order ID is not available. Please ensure a valid Sales Order is selected.');
 
-                    SalesOrderLineRecord.SetRange(SalesOrderID, Rec.SalesOrderID);
+                    // Set the Sales Order ID in the handler
+                    SalesOrderLineHandler.SetSalesOrderID(Rec.SalesOrderID);
 
-                    if SalesOrderLineRecord.FindSet() then
-                        Page.RunModal(Page::"NVR Sales Order Line List", SalesOrderLineRecord)
-                    else
-                        Message('No sales order lines found for Sales Order ID: %1', Rec.SalesOrderID);
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+                    Message('Commited');
+
+                    // Open the Sales Order Line List page
+                    Page.RunModal(Page::"NVR Sales Order Line List");
                 end;
             }
             action(AddNewSalesOrderLine)
@@ -111,7 +116,27 @@ page 50108 "NVR Sales Order List"
                 Image = New;
                 ApplicationArea = All;
                 trigger OnAction()
+                var
+                    SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+                    CanAdd: Boolean;
                 begin
+                    // Ensure a valid Sales Order is selected
+                    if Rec.SalesOrderID = '' then
+                        Error('Please select a valid Sales Order.');
+
+                    // Check if more lines can be added
+                    CanAdd := CanAddMore(Rec.SalesOrderID);
+                    Message('Boolean Return Value: %1', CanAdd); // Debugging message
+                    if not CanAdd then
+                        Error('Cannot add more sales order lines to the sales order as there is no remaining budget left.');
+
+                    // Set the Sales Order ID in the handler
+                    SalesOrderLineHandler.SetSalesOrderID(Rec.SalesOrderID);
+
+                    // Commit the transaction before opening the page
+                    COMMIT;
+
+                    // Open the Sales Order Line Card page
                     Page.RunModal(Page::"NVR Sales Order Line Card");
                 end;
             }
@@ -141,9 +166,13 @@ page 50108 "NVR Sales Order List"
     }
 
     trigger OnOpenPage()
+    var
+        Handler : Codeunit "NVR SalesOrderHandler";
     begin
         // Ensure the first record is loaded into Rec when the page opens
         if Rec.FindFirst() then
+            if Handler.GetCustomerID() <> '' then
+            Rec.SetRange(CustomerID, Handler.GetCustomerID());
             CurrPage.Update(); // Refresh the page to reflect the first record
     end;
 
@@ -153,6 +182,35 @@ page 50108 "NVR Sales Order List"
         //if Rec.SalesOrderID <> '' then
             //Message('Current Record Sales Order ID: %1', Rec.SalesOrderID); // Debugging message
         //CurrPage.Update(); // Refresh the page to reflect the selected record
+    end;
+
+    Local procedure CanAddMore(SalesOrderID: Code[20]): Boolean
+    var
+        SalesOrderLine: Record "NVR Sales Order Line";
+        SalesOrder: Record "NVR Sales Orders";
+        TotalLineAmount: Decimal;
+    begin
+        //if SalesOrderLine.Get(SalesOrderLineID) then begin
+            if SalesOrder.Get(SalesOrderID) then begin
+                TotalLineAmount := 0;
+
+                // Filter Sales Order Lines by the given SalesOrderID
+                SalesOrderLine.SetRange(SalesOrderID, SalesOrderID);
+
+                // Sum up the Line Amounts for all Sales Order Lines
+                if SalesOrderLine.FindSet() then
+                    repeat
+                        TotalLineAmount += SalesOrderLine."Line Amount";
+                    until SalesOrderLine.Next() = 0;
+
+                // Check if the total line amount exceeds the sales order total amount
+                //Message('Result : %1', TotalLineAmount <= SalesOrder.TotalAmount);
+                Message('Total Line Amount: %1, Sales Order Total Amount: %2', TotalLineAmount, SalesOrder.TotalAmount); // Debugging message
+                exit(TotalLineAmount < SalesOrder.TotalAmount);
+            end else
+                Error('Sales Order not found: %1', SalesOrderID);
+        //end else
+            //Error('Sales Order Line not found: %1', SalesOrderLineID);
     end;
 
     [IntegrationEvent(false, false)]

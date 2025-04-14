@@ -24,7 +24,7 @@ pageextension 50113 "NVR Customer List Ext" extends "NVR Customer List"
     {
         addlast(Processing)
         {
-            action(CalculateLoyaltyPoints)
+            /*action(CalculateLoyaltyPoints)
             {
                 Caption = 'Calculate Loyalty Points';
                 Image = Calculate;
@@ -37,7 +37,7 @@ pageextension 50113 "NVR Customer List Ext" extends "NVR Customer List"
                     LoyaltyHandler.UpdateAllCustomers();
                     Message('Loyalty points and levels have been updated for all customers.');
                 end;
-            }
+            }*/
         }
     }
 

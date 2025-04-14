@@ -76,12 +76,7 @@ table 50104 "NVR Sales Order Line"
             DataClassification = CustomerContent;
             Caption = 'Line Amount';
             NotBlank = true;
-            Editable = false;
-            trigger OnValidate()
-            begin
-                //This is calculated based on the quantity and unit price
-                "Line Amount" := Quantity * Unitprice;
-            end;
+            Editable = true;
         }
     }
     

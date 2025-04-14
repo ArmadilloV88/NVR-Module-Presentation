@@ -138,7 +138,11 @@ page 50100 "NVR Customer List"
                 Image = Edit;
                 ApplicationArea = All;
                 trigger OnAction()
+                var 
+                    Handler : Codeunit "NVR SalesOrderHandler";
                 begin
+                    //Message('Customer ID to be passed: %1', Rec.CustomerID);
+                    Handler.SetCustomerID(Rec.CustomerID); // Set the Customer ID in the handler
                     Page.RunModal(Page::"NVR Sales Order List");
                 end;
                 //Need to add the page linking between customer and sales order list

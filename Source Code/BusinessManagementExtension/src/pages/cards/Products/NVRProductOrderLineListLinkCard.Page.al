@@ -49,7 +49,7 @@ page 50122 "NVR Product Addition"
                         end;
 
                         // Recalculate the Line Amount
-                        Rec."Line Amount" := Rec.Quantity * Rec."Unit Price";
+                        Rec."Product Total Amount" := Rec.Quantity * Rec."Unit Price";
                     end;
 
                 }
@@ -61,14 +61,14 @@ page 50122 "NVR Product Addition"
                     //we need to pull the actual unit price of the product from the product table using the selected product id
 
                 }
-                field("Line Amount"; Rec."Line Amount")
+                field("Product Total Amount"; Rec."Product Total Amount")
                 {
-                    Caption = 'Line Amount';
+                    Caption = 'Product Total Amount';
                     ApplicationArea = All;
                     Editable = false;
                     trigger OnValidate()
                     begin
-                        Rec."Line Amount" := Rec.Quantity * Rec."Unit Price"; // Calculate the total line amount
+                        Rec."Product Total Amount" := Rec.Quantity * Rec."Unit Price"; // Calculate the total line amount
                     end;
                     //this is where the quantity multiplied by the unit price of a product
                 }
