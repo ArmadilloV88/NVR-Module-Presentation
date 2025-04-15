@@ -123,13 +123,14 @@ page 50112 "NVR Invoice Document"
     trigger OnOpenPage()
     var
         SalesOrder: Record "NVR Sales Orders";
+        InvoiceHandler: Codeunit "NVR InvoiceHandler";
     begin
         if Rec.InvoiceID <> '' then begin
             // Load Total Amount Due and Remaining Amount
             if Rec.SalesOrderID <> '' then begin
                 if SalesOrder.Get(Rec.SalesOrderID) then begin
                     TotalAmountDue := SalesOrder."TotalAmount";
-                    RemainingAmount := CalcRemainingAmount(Rec.SalesOrderID);
+                    RemainingAmount := InvoiceHandler.CalcRemainingAmount(Rec.SalesOrderID);
                 end;
             end;
 
@@ -153,6 +154,7 @@ page 50112 "NVR Invoice Document"
     var
         InvoiceRecord: Record "NVR Invoices";
         NewRemainingAmount: Decimal;
+        InvoiceHandler: Codeunit "NVR InvoiceHandler";
     begin
         // Load the current record into the variable
         InvoiceRecord := Rec;
@@ -186,7 +188,7 @@ page 50112 "NVR Invoice Document"
         InvoiceRecord.Modify(true);
 
         // Recalculate the Remaining Amount
-        NewRemainingAmount := CalcRemainingAmount(InvoiceRecord.SalesOrderID);
+        NewRemainingAmount := InvoiceHandler.CalcRemainingAmount(InvoiceRecord.SalesOrderID);
 
         // Check if the Remaining Amount is valid
         if not IsRemainingAmountValid(NewRemainingAmount) then begin
@@ -216,6 +218,7 @@ page 50112 "NVR Invoice Document"
     var
         SalesOrder: Record "NVR Sales Orders";
         InvoiceRecord: Record "NVR Invoices";
+        Invoicehandler: Codeunit "NVR InvoiceHandler";
     begin
         // Load the current record into the variable
         InvoiceRecord := Rec;
@@ -234,7 +237,7 @@ page 50112 "NVR Invoice Document"
         end;
 
         // Calculate Remaining Amount
-        RemainingAmount := CalcRemainingAmount(InvoiceRecord.SalesOrderID);
+        RemainingAmount := InvoiceHandler.CalcRemainingAmount(InvoiceRecord.SalesOrderID);
 
         // Inject the data back into Rec to reflect it on the page
         Rec := InvoiceRecord;
@@ -243,22 +246,7 @@ page 50112 "NVR Invoice Document"
         CurrPage.Update();
     end;
 
-    procedure CalcRemainingAmount(SalesOrderID: Code[20]): Decimal
-    var
-        InvoiceRecord: Record "NVR Invoices";
-        TotalInvoiceAmounts: Decimal;
-    begin
-        TotalInvoiceAmounts := 0;
-
-        // Calculate the sum of all invoice amounts for the specified Sales Order ID
-        InvoiceRecord.SetRange("SalesOrderID", SalesOrderID);
-        if InvoiceRecord.FindSet() then
-            repeat
-                TotalInvoiceAmounts += InvoiceRecord."InvoiceAmount";
-            until InvoiceRecord.Next() = 0;
-
-        exit(TotalAmountDue - TotalInvoiceAmounts);
-    end;
+    
 
     procedure CalcAmountPaid(InvoiceID: Code[20]): Decimal
     var

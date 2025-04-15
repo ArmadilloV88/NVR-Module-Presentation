@@ -67,6 +67,7 @@ page 50117 "NVR Payment ListPart"
                     NewPaymentID: Code[20];
                     Counter: Integer;
                     PaymentHandler: Codeunit "NVR Payment EventHandler";
+                    InvoiceHandler : Codeunit "NVR InvoiceHandler";
                 begin
                     //Message('(Payment ListPart) Selected Invoice: %1', SelectedInvoice.InvoiceID); // Debugging message
 

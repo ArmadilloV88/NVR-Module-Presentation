@@ -45,6 +45,7 @@ page 50108 "NVR Sales Order List"
                     Caption = 'Payment Status';
                     ApplicationArea = All;
                     Editable = false;
+                    StyleExpr = Rec.StatusStyle;
                 }
 
                 field("NVR Currency"; Rec.Currency)
@@ -99,6 +100,7 @@ page 50108 "NVR Sales Order List"
                         Error('The Sales Order ID is not available. Please ensure a valid Sales Order is selected.');
 
                     // Set the Sales Order ID in the handler
+                    //Message('Setting Sales Order ID to %1', Rec.SalesOrderID);
                     SalesOrderLineHandler.SetSalesOrderID(Rec.SalesOrderID);
 
                     // Commit the transaction before opening the page
@@ -168,7 +170,9 @@ page 50108 "NVR Sales Order List"
     trigger OnOpenPage()
     var
         Handler : Codeunit "NVR SalesOrderHandler";
+        StatusHandler : Codeunit "NVR Sales Order Status Updater";
     begin
+        StatusHandler.UpdateAllSalesOrders();
         // Ensure the first record is loaded into Rec when the page opens
         if Rec.FindFirst() then
             if Handler.GetCustomerID() <> '' then
@@ -177,11 +181,12 @@ page 50108 "NVR Sales Order List"
     end;
 
     trigger OnAfterGetCurrRecord()
+    var
+        StatusHandler: Codeunit "NVR Sales Order Status Updater";
     begin
-        // Ensure Rec is updated when a record is selected
-        //if Rec.SalesOrderID <> '' then
-            //Message('Current Record Sales Order ID: %1', Rec.SalesOrderID); // Debugging message
-        //CurrPage.Update(); // Refresh the page to reflect the selected record
+        // Dynamically update the payment status for the current sales order
+        if Rec.SalesOrderID <> '' then
+            StatusHandler.UpdateSalesOrderStatus(Rec);
     end;
 
     Local procedure CanAddMore(SalesOrderID: Code[20]): Boolean

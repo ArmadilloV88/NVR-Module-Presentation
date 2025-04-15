@@ -18,12 +18,17 @@ codeunit 50114 "NVR Sales Order Status Updater"
             until InvoiceRecord.Next() = 0;
 
         // Update the payment status based on the total amount paid
-        if TotalAmountPaid >= SalesOrderRecord."TotalAmount" then
-            SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::Paid
-        else if TotalAmountPaid > 0 then
-            SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::PartiallyPaid
-        else
+        //Message('Sales Order %1, Total Amount Paid: %2', SalesOrderRecord."SalesOrderID", TotalAmountPaid); // Debugging message
+        if TotalAmountPaid >= SalesOrderRecord."TotalAmount" then begin
+        SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::Paid;
+        SalesOrderRecord."StatusStyle" := 'Favorable';
+        end else if TotalAmountPaid > 0 then begin
+            SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::PartiallyPaid;
+            SalesOrderRecord."StatusStyle" := 'Attention';
+        end else begin
             SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::NotPaid;
+            SalesOrderRecord."StatusStyle" := 'UnFavorable';
+        end;
 
         // Save the updated sales order record
         if SalesOrderRecord.Modify() then

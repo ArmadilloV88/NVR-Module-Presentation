@@ -39,7 +39,28 @@ table 50101 "NVR Sales Orders"
             Caption = 'Payment Status';
             NotBlank = true;
             Editable = true;
+            trigger OnValidate()
+            begin
+                // Dynamically calculate the StatusStyle whenever the Status changes
+                case "Payment Status" of
+                    Enum::"NVR PaymentStatusEnum"::Paid:
+                        StatusStyle := 'Favorable'; // Green for Paid
+                    Enum::"NVR PaymentStatusEnum"::NotPaid:
+                        StatusStyle := 'UnFavorable'; // Red for Not Paid
+                    Enum::"NVR PaymentStatusEnum"::PartiallyPaid:
+                        StatusStyle := 'Attention'; // Orange for Partially Paid
+                    else
+                        StatusStyle := ''; // Default style
+                end;
+            end;
         }
+        field(501017; StatusStyle; Text[30])
+        {
+            Caption = 'Status Style';
+            Editable = false; // This field is calculated and not editable
+            DataClassification = ToBeClassified;
+        }
+        
         field(501015;TotalAmount; Decimal)
         {
             DataClassification = ToBeClassified;

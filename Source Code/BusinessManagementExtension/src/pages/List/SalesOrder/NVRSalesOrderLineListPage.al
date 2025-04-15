@@ -101,7 +101,7 @@ page 50104 "NVR Sales Order Line List"
                 end;
             }
 
-            action(AddProduct)
+            /*action(AddProduct)
             {
                 Caption = 'Add Product to Order Line';
                 Image = Add;
@@ -127,7 +127,7 @@ page 50104 "NVR Sales Order Line List"
                     // Open the Product Addition page with the new record
                     Page.RunModal(Page::"NVR Product Addition", ProductAdditionRecord);
                 end;
-            }
+            }*/
         }
         area(Processing)
         {
@@ -181,8 +181,12 @@ page 50104 "NVR Sales Order Line List"
     end;
 
     trigger OnAfterGetRecord()
+    var 
+        SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
     begin
-        RecalculateSalesOrderLine();
+        //Message('OnAfterGetRecord Triggered for Sales Order Line ID: %1', Rec."Sales Order Line ID");
+        SalesOrderLineHandler.SetSalesOrderLineID(Rec."Sales Order Line ID");
+        UpdateSalesOrderLine();
     end;
 
     procedure CalculateLineRemainingAmount(CurrentAmount: Decimal; MaxAmount: Decimal): Decimal
@@ -190,7 +194,16 @@ page 50104 "NVR Sales Order Line List"
         exit(MaxAmount - CurrentAmount);    
     end;
 
-    procedure RecalculateSalesOrderLine()
+    procedure UpdateSalesOrderLine()
+    SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+    begin
+        SalesOrderLineHandler.RecalculateSalesOrderLine();
+        LineMaxBudget:= SalesOrderLineHandler.GetLineMaxBudget();
+        RemainingLineBudget:= SalesOrderLineHandler.GetRemainingLineBudget();
+        IsOverBudget:= SalesOrderLineHandler.GetIsOverBudget();
+    end;
+
+    /*procedure RecalculateSalesOrderLine()
     var
         SalesOrderLineProducts: Record "NVR SalesOrderLineProducts";
         TotalLineAmount: Decimal;
@@ -213,7 +226,7 @@ page 50104 "NVR Sales Order Line List"
 
         RemainingLineBudget := LineMaxBudget - TotalLineAmount;
         IsOverBudget := TotalLineAmount > LineMaxBudget;
-    end;
+    end;*/
 }
 /*Requires Further Testing and better refinement*/
 //Needs better logic overlay and refinement - Need to work with budget distribution to each sales order line

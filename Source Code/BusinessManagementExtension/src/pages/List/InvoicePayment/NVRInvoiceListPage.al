@@ -1,5 +1,8 @@
 page 50102 "NVR Invoice List"
 {
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    DeleteAllowed = false;
     Caption = 'Invoice List';
     PageType = List;
     SourceTable = "NVR Invoices";
@@ -137,8 +140,17 @@ page 50102 "NVR Invoice List"
                 trigger OnAction()
                 var
                     InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
+                    ValidationHandler: Codeunit "NVR InvoiceHandler";
+                    Handler: Codeunit "NVR InvoiceSalesOrderHandler";
+                    
                     NewInvoice: Record "NVR Invoices";
                 begin
+                    if ValidationHandler.CalcRemainingAmount(Handler.GetStoredSalesOrderID()) = 0 then 
+                    begin
+                        Error('Error : Unable to add a new invoice to this sales order as the sales order is fully invoiced');
+                        exit;
+                    end;
+                
                     // Add a new invoice using the Codeunit
                     NewInvoice := InvoiceHandler.AddNewInvoice();
                     //Message('New Invoice Created: %1 SalesOrderID : %2' , NewInvoice.InvoiceID, NewInvoice.SalesOrderID);
@@ -163,21 +175,40 @@ page 50102 "NVR Invoice List"
     trigger OnAfterGetCurrRecord()
     var
         PaymentsListPartPage: Page "NVR Payment ListPart";
+        InvoiceHandler: Codeunit "NVR InvoiceHandler";
     begin
+        InvoiceHandler.SetSalesOrderID(Rec.SalesOrderID);
         // Pass the current record to the Payment ListPart
         CurrPage.PaymentsListPart.PAGE.SetSelectedInvoice(Rec);
         UpdateTheAmountPaid();
 
     end;
 
+    trigger OnOpenPage()
+    var
+        Handler: Codeunit "NVR InvoiceSalesOrderHandler";
+        Invoices: Record "NVR Invoices";
+        SalesOrderID: Code[20];
+    begin
+        // Retrieve the SalesOrderID using the GetSalesOrderID procedure
+        SalesOrderID := Handler.GetStoredSalesOrderID();
+        Message('Sales Order ID Retrieved: %1', SalesOrderID);
+
+        // Apply a filter to only show invoices with the retrieved SalesOrderID
+        if SalesOrderID <> '' then
+            Rec.SetRange("SalesOrderID", SalesOrderID);
+    end;
+
     procedure UpdateTheAmountPaid()
     var
         InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
         UpdatedAmountPaid: Decimal;
-        Invoices : Record "NVR Invoices";
+        Invoices: Record "NVR Invoices";
     begin
+        // Check if an invoice is selected
         if Rec.InvoiceID = '' then
-            Error('No Invoice is selected. Please select an invoice to view.');
+            exit; // Exit the procedure if no invoice is selected
+
         if Invoices.Get(Rec.InvoiceID) then begin
             // Update the invoice amount paid using the Codeunit
             UpdatedAmountPaid := InvoiceHandler.UpdateInvoiceAmountPaid(Rec.InvoiceID);
