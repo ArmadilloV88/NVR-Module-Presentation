@@ -127,4 +127,89 @@ codeunit 50109 "NVR RoleCentreHandler"
         end;
         exit(HighestPaymentAmount);
     end;
+
+    procedure GetMostSoldProduct(): Text[100]
+    var
+        ProductsRec: Record "NVR SalesOrderLineProducts";
+        Products: Record "NVR Products";
+        MostSoldProductID: Code[20];
+        MostSoldQuantity: Integer;
+        CurrentProductQuantity: Integer;
+    begin
+        MostSoldQuantity := 0;
+
+        // Loop through all products in the SalesOrderLineProducts table
+        if ProductsRec.FindSet() then begin
+            repeat
+                CurrentProductQuantity := ProductsRec.Quantity;
+
+                // Check if the current product has the highest quantity sold
+                if CurrentProductQuantity > MostSoldQuantity then begin
+                    MostSoldQuantity := CurrentProductQuantity;
+                    MostSoldProductID := ProductsRec."ProductID";
+                end;
+            until ProductsRec.Next() = 0;
+        end;
+
+        // Retrieve the product name using the Product ID
+        if Products.Get(MostSoldProductID) then
+            exit(Products.ProductName)
+        else
+            exit('-');
+    end;
+
+    procedure GetMostListedCategory(): Text[100]
+    var
+        Products: Record "NVR Products";
+        Categories: Record "NVR Product Categories";
+        CategoryCount: Dictionary of [Code[20], Integer];
+        MostListedCategoryID: Code[20];
+        MostListedCount: Integer;
+        CurrentCount: Integer;
+        CategoryID: Code[20];
+    begin
+        MostListedCount := 0;
+
+        // Count the occurrences of each category in the Products table
+        if Products.FindSet() then begin
+            repeat
+                if not CategoryCount.ContainsKey(Products."CategoryID") then
+                    CategoryCount.Add(Products."CategoryID", 1)
+                else begin
+                    CurrentCount := CategoryCount.Get(Products."CategoryID");
+                    CategoryCount.Set(Products."CategoryID", CurrentCount + 1);
+                end;
+            until Products.Next() = 0;
+        end;
+
+        // Find the category with the highest count
+        foreach CategoryID in CategoryCount.Keys() do begin
+            if CategoryCount.Get(CategoryID) > MostListedCount then begin
+                MostListedCount := CategoryCount.Get(CategoryID);
+                MostListedCategoryID := CategoryID;
+            end;
+        end;
+
+        // Retrieve the category name using the Category ID
+        if Categories.Get(MostListedCategoryID) then
+            exit(Categories.CategoryName) // Replace 'CategoryName' with the correct field name
+        else
+            exit('-');
+    end;
+
+    procedure GetTotalSalesOrderAmount(): Decimal
+    var
+        SalesOrderRec: Record "NVR Sales Orders";
+        TotalSalesOrderAmount: Decimal;
+    begin
+        TotalSalesOrderAmount := 0;
+
+        // Sum up all the sales order amounts
+        if SalesOrderRec.FindSet() then begin
+            repeat
+                TotalSalesOrderAmount := TotalSalesOrderAmount + SalesOrderRec.TotalAmount; // Replace 'OrderTotal' with the correct field name
+            until SalesOrderRec.Next() = 0;
+        end;
+        exit(TotalSalesOrderAmount);
+    end;
 }

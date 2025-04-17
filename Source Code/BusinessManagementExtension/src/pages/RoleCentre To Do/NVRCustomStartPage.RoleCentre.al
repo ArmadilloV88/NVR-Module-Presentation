@@ -26,7 +26,8 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-
+            //can add a graph that helps represent the group (Overview)
+            //It can show a pie or bar graph that shows the difference between the totalnumber of sales orders, invoices and payments
             group(FinanceActivitiesGroup)
             {
                 Caption = 'Finance Activities';
@@ -36,7 +37,7 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the groups (Finances)
+            //can add a graph that helps represent the group (Finances)
             group(SalesActivitiesGroup)
             {
                 Caption = 'Sales Activities';
@@ -46,7 +47,7 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the groups (Sales)
+            //can add a graph that helps represent the group (Sales)
             //can add a listpart that shows the top customer loyalty leaderboard
             //can then have a pie chart that shows the top 10 customers by paid sales orders
         }
