@@ -4,6 +4,7 @@ codeunit 50107 "NVR SalesOrderLineHandler"
 
     var
         SalesOrderID: Code[20];
+        SalesOrderLineID: Code[20];
 
     procedure SetSalesOrderID(NewSalesOrderID: Code[20])
     begin
@@ -137,5 +138,65 @@ codeunit 50107 "NVR SalesOrderLineHandler"
         until not SalesOrderLine.Get(NewID); // Ensure the ID does not already exist
 
         exit(NewID);
+    end;
+
+    procedure SetSalesOrderLineID(RetrievedSalesOrderLineID: Code[20])
+    begin
+        SalesOrderLineID := RetrievedSalesOrderLineID;
+
+    end;
+
+    procedure GetSalesOrderLineID(): Code[20]
+    begin
+        exit(SalesOrderLineID);
+    end;
+
+    procedure RecalculateSalesOrderLine()
+    var
+        SalesOrderLineProducts: Record "NVR SalesOrderLineProducts";
+        
+        SalesOrder : Record "NVR Sales Orders";
+    begin
+        TotalLineAmount := 0; // Reset the total
+        LineMaxBudget := GetSalesOrderTotal(GetSalesOrderID()); // Reset the max budget
+        RemainingLineBudget := 0; // Reset the remaining budget
+
+        // Sum up the Line Amount from related products
+        SalesOrderLineProducts.SetRange("Sales Order Line ID", GetSalesOrderLineID());
+        if SalesOrderLineProducts.FindSet() then
+            repeat
+                TotalLineAmount += SalesOrderLineProducts."Product Total Amount";
+            until SalesOrderLineProducts.Next() = 0;
+
+        // Calculate values without modifying the record
+        if SalesOrder.Get(GetSalesOrderLineID()) then
+            LineMaxBudget := SalesOrder."TotalAmount";
+
+        RemainingLineBudget := LineMaxBudget - TotalLineAmount;
+        IsOverBudget := TotalLineAmount > LineMaxBudget;
+    end;
+
+    var
+        TotalLineAmount: Decimal;
+        //TotalLineAmount: Decimal;
+        LineMaxBudget: Decimal;
+        RemainingLineBudget: Decimal;
+        IsOverBudget: Boolean;
+
+    procedure GetLineMaxBudget(): Decimal
+    begin
+        exit(LineMaxBudget);
+    end;
+    procedure GetRemainingLineBudget(): Decimal
+    begin
+        exit(RemainingLineBudget);
+    end;
+    procedure GetIsOverBudget(): Boolean
+    begin
+        exit(IsOverBudget);
+    end;
+    procedure GetTotalLineAmount(): Decimal
+    begin
+        exit(TotalLineAmount);
     end;
 }

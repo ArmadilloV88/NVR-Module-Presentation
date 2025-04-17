@@ -45,29 +45,36 @@ page 50109 "NVR Sls. Ord. Line Prdt."
     {
         area(processing)
         {
-            /*action(AddProduct)
+            action(AddProduct)
             {
-                Caption = 'Add Product';
+                Caption = 'Add Product to Order Line';
                 Image = Add;
                 ApplicationArea = All;
                 trigger OnAction()
                 var
-                    ProductAdditionRecord: Record "NVR SalesOrderLineProducts"; // Replace with the correct table for the NVR Product Addition page
+                    ProductAdditionRecord: Record "NVR SalesOrderLineProducts";
+                    SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+
                 begin
-                    Message('Sales Order Line ID: %1', Rec."Sales Order Line ID");
-                    // Ensure the Sales Order Line ID is available
-                    if Rec."Sales Order Line ID" = '' then begin
-                        Error('The Sales Order Line ID is not available. Please ensure a valid Sales Order Line is selected.');
+                    // Check if the current budget exceeds the max budget
+                    //Message('Current budget: %1, Max budget: %2', Format(SalesOrderLineHandler.GetTotalLineAmount), Format(SalesOrderLineHandler.GetLineMaxBudget()));
+                    if SalesOrderLineHandler.GetTotalLineAmount >= SalesOrderLineHandler.GetLineMaxBudget then begin
+                        Message('Cannot add a product. The current budget (%1) exceeds the maximum budget (%2).', Format(SalesOrderLineHandler.GetTotalLineAmount), Format(SalesOrderLineHandler.GetLineMaxBudget));
+                        exit; // Prevent further execution
                     end;
 
                     // Initialize a new record for the Product Addition page
                     ProductAdditionRecord.Init();
-                    ProductAdditionRecord."Sales Order Line ID" := Rec."Sales Order Line ID"; // Pass the correct Sales Order Line ID
+                    ProductAdditionRecord."Sales Order Line ID" := SalesOrderLineHandler.GetSalesOrderLineID(); // Pass the selected Sales Order Line ID
+                    ProductAdditionRecord.Insert(false); // Insert the record into the database
+
+                    // Commit the transaction to avoid locking issues
+                    COMMIT;
 
                     // Open the Product Addition page with the new record
                     Page.RunModal(Page::"NVR Product Addition", ProductAdditionRecord);
                 end;
-            }*/
+            }
             action(DeleteProduct)
             {
                 Caption = 'Delete Product';
