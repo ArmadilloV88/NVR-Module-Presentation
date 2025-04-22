@@ -44,66 +44,142 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Sales)
             //can add a listpart that shows the top customer loyalty leaderboard
-            //can then have a pie chart that shows the top 10 customers by paid sales orders
         }
     }
 
     actions
     {
-        area(Sections)
+        // area(Sections)
+        // {
+        //     group(SalesDocuments)
+        //     {
+        //         Caption = 'Sales Documents';
+        //         action(OpenSalesOrders)
+        //         {
+        //             Caption = 'Open Sales Orders';
+        //             RunObject = Page "NVR Sales Order List";
+        //             ApplicationArea = All;
+        //         }
+        //         action(OpenInvoices)
+        //         {
+        //             Caption = 'Open Invoices';
+        //             RunObject = Page "NVR Invoice List";
+        //             ApplicationArea = All;
+        //         }
+        //     }
+
+        //     // group(FinanceDocuments)
+        //     // {
+        //     //     Caption = 'Finance Documents';
+        //     //     action(OpenPayments)
+        //     //     {
+        //     //         Caption = 'Open Payments';
+        //     //         RunObject = Page "NVR Payment List";
+        //     //         ApplicationArea = All;
+        //     //     }
+        //     //     action(OpenUnpaidInvoices)
+        //     //     {
+        //     //         Caption = 'Open Unpaid Invoices';
+        //     //         RunObject = Page "NVR Invoice List";
+        //     //         ApplicationArea = All;
+        //     //     }
+        //     // }
+        // }
+
+        // area(Creation)
+        // {
+        //     action(AddSalesOrder)
+        //     {
+        //         Caption = 'Add Sales Order';
+        //         RunObject = Page "NVR Sales Order Card";
+        //         RunPageMode = Create;
+        //         ApplicationArea = All;
+        //     }//works fine
+        //     // action(AddInvoice)
+        //     // {
+        //     //     Caption = 'Add Invoice';
+        //     //     RunObject = Page "NVR Invoice Document";
+        //     //     RunPageMode = Create;
+        //     //     ApplicationArea = All;
+        //     // } will cause a break (weird bug)
+        //     action(AddCustomer){
+        //         Caption = 'Add Customer';
+        //         RunObject = Page "NVR Customer Card";
+        //         RunPageMode = Create;
+        //         ApplicationArea = All;
+        //     }
+        //     // action(AddProduct){
+        //     //     Caption = 'Add Product';
+        //     //     RunObject = Page "NVR Product Card";
+        //     //     RunPageMode = Create;
+        //     //     ApplicationArea = All;
+        //     // }will cause a break (similiar to the invoice action)
+        //     // action(AddPayments){
+        //     //     Caption = 'Add Payment';
+        //     //     RunObject = Page "Payment Journal";
+        //     //     RunPageMode = Create;
+        //     //     ApplicationArea = All;
+        //     // } will cause a break (similiar to the invoice action)
+        // }
+        area(Processing)
         {
-            group(SalesDocuments)
+            group(SalesOrder)
             {
-                Caption = 'Sales Documents';
-                action(OpenSalesOrders)
+                Caption = 'SalesOrders';
+                action(ViewSalesOrders)
                 {
-                    Caption = 'Open Sales Orders';
+                    Caption = 'View Sales Orders';
                     RunObject = Page "NVR Sales Order List";
                     ApplicationArea = All;
-                }
-                action(OpenInvoices)
+                }//works fine
+            }
+            group(Invoices)
+            {
+                Caption = 'Invoices';
+                action(ViewInvoices)
                 {
-                    Caption = 'Open Invoices';
+                    Caption = 'View Invoices';
                     RunObject = Page "NVR Invoice List";
                     ApplicationArea = All;
                 }
-            }
 
-            group(FinanceDocuments)
+            }
+            group(Customers)
             {
-                Caption = 'Finance Documents';
-                action(OpenPayments)
+                Caption = 'Customers';
+                action(ViewCustomers)
                 {
-                    Caption = 'Open Payments';
+                    Caption = 'View Customers';
+                    RunObject = Page "NVR Customer List";
+                    ApplicationArea = All;
+                }
+            }
+            group(Products)
+            {
+                Caption = 'Products';
+                action(ViewProducts)
+                {
+                    Caption = 'View Products';
+                    RunObject = Page "NVR Product List";
+                    ApplicationArea = All;
+                }
+                action(ViewProductCategories)
+                {
+                Caption = 'View Product Categories';
+                RunObject = Page "NVR Product Category List";
+                ApplicationArea = All;
+                }
+            }
+            group(Payments)
+            {
+                Caption = 'Payments';
+                action(ViewPayments)
+                {
+                    Caption = 'View Payments';
                     RunObject = Page "NVR Payment List";
                     ApplicationArea = All;
                 }
-                action(OpenUnpaidInvoices)
-                {
-                    Caption = 'Open Unpaid Invoices';
-                    RunObject = Page "NVR Invoice List";
-                    ApplicationArea = All;
-                }
-            }
-        }
-
-        area(Creation)
-        {
-            action(AddSalesOrder)
-            {
-                Caption = 'Add Sales Order';
-                RunObject = Page "Sales Order";
-                RunPageMode = Create;
-                ApplicationArea = All;
-            }
-            action(AddInvoice)
-            {
-                Caption = 'Add Invoice';
-                RunObject = Page "Sales Invoice";
-                RunPageMode = Create;
-                ApplicationArea = All;
             }
         }
 

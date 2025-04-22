@@ -67,16 +67,14 @@ page 50117 "NVR Payment ListPart"
                     NewPaymentID: Code[20];
                     Counter: Integer;
                     PaymentHandler: Codeunit "NVR Payment EventHandler";
-                    InvoiceHandler : Codeunit "NVR InvoiceHandler";
+                    InvoiceHandler: Codeunit "NVR InvoiceHandler";
                 begin
-                    //Message('(Payment ListPart) Selected Invoice: %1', SelectedInvoice.InvoiceID); // Debugging message
-
                     // Validate the Selected Invoice
                     if SelectedInvoice.IsEmpty() then
                         Error('Please select a valid Invoice before adding a payment.');
 
                     // Check if the invoice is fully paid
-                    if SelectedInvoice.Status = Enum::"NVR PaymentStatusEnum"::Paid then begin
+                    if (SelectedInvoice.Status = Enum::"NVR PaymentStatusEnum"::Paid) or (SelectedInvoice.RemAmtToBePaidToInvoice = 0) then begin
                         Message('The selected invoice is already fully paid. There is no need to add a payment.');
                         exit; // Exit the action as no further processing is needed
                     end;
@@ -93,6 +91,7 @@ page 50117 "NVR Payment ListPart"
                     NewPayment.PaymentID := NewPaymentID;
                     NewPayment.InvoiceID := SelectedInvoice.InvoiceID; // Set the InvoiceID
                     NewPayment."Payment Date" := Today; // Set the default payment date
+                    NewPayment.PaymentAmount := SelectedInvoice.RemAmtToBePaidToInvoice; // Default to the remaining amount
 
                     // Insert the new payment record into the database
                     NewPayment.Insert(true);
@@ -103,7 +102,7 @@ page 50117 "NVR Payment ListPart"
                     // Open the Payment Card page for the new payment
                     Page.RunModal(Page::"NVR Payment Card", NewPayment); // Pass the NewPayment record
 
-                    // Delegate the remaining amount and status update to the Codeunit
+                    // Update the invoice's remaining amount and status
                     PaymentHandler.UpdateInvoiceAfterPaymentChange(SelectedInvoice.InvoiceID);
 
                     // Refresh the current page (Payment ListPart)
@@ -131,12 +130,13 @@ page 50117 "NVR Payment ListPart"
 
                     // Delete the selected payment
                     Rec.Delete();
-
-                    // Delegate the remaining amount and status update to the Codeunit
-                    PaymentHandler.UpdateInvoiceAfterPaymentChange(InvoiceRecord.InvoiceID);
+                    
 
                     // Trigger the event to notify the parent page
                     OnPaymentDeleted(InvoiceRecord.InvoiceID);
+
+                    // Delegate the remaining amount and status update to the Codeunit
+                    PaymentHandler.UpdateInvoiceAfterPaymentChange(InvoiceRecord.InvoiceID);
 
                     // Refresh the current page (Payment ListPart)
                     CurrPage.Update();

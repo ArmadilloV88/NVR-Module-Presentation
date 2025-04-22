@@ -17,17 +17,16 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
     var
         NewInvoice: Record "NVR Invoices";
     begin
-        //Message('Sales Order for gen ID: %1', StoredSalesOrderID);
-        if StoredSalesOrderID = '' then
-            Error('No Sales Order ID is stored. Please set the Sales Order ID first.');
-
         // Initialize and create a new invoice
         NewInvoice.Init();
         NewInvoice."InvoiceID" := GenerateUniqueInvoiceID();
+        Message('New Invoice ID: %1', NewInvoice."InvoiceID");
         NewInvoice."SalesOrderID" := StoredSalesOrderID;
+
+        // Insert the new invoice into the database
         NewInvoice.Insert(true);
 
-        //Message('New Invoice Created: %1 for Sales Order ID: %2', NewInvoice."InvoiceID", StoredSalesOrderID);
+        // Return the newly created invoice
         exit(NewInvoice);
     end;
 
@@ -66,7 +65,7 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
         repeat
             Counter := Counter + 1;
             NewID := 'INV' + PadStr(Format(Counter), 17, '0'); // Prefix with "INV" and pad with zeros
-        until not TempInvoiceRecord.Get(NewID);
+        until not TempInvoiceRecord.Get(NewID); // Ensure the ID does not already exist
 
         exit(NewID);
     end;

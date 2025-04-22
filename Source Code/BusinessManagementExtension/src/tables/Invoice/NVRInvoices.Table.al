@@ -139,7 +139,7 @@ table 50102 "NVR Invoices"
                 exit(SalesOrderRecord); // Return the updated sales order record
             end else begin
                 // Handle the case where the sales order is not found
-                Error('Sales Order with ID %1 not found.', SalesOrderID);
+                //Error('Sales Order with ID %1 not found.', SalesOrderID);
             end;
         end;
 }

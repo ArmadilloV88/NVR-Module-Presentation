@@ -1,7 +1,7 @@
 page 50112 "NVR Invoice Document"
 {
     Caption = 'Invoice Document';
-    PageType = Document;
+    PageType = Card;
     SourceTable = "NVR Invoices";
 
     layout
@@ -21,7 +21,7 @@ page 50112 "NVR Invoice Document"
                 {
                     Caption = 'Sales Order ID';
                     ApplicationArea = All;
-                    Editable = false;
+                    Editable = true;
                     NotBlank = true;
                     TableRelation = "NVR Sales Orders".SalesOrderID;
                     trigger OnValidate()
@@ -123,14 +123,17 @@ page 50112 "NVR Invoice Document"
     trigger OnOpenPage()
     var
         SalesOrder: Record "NVR Sales Orders";
-        InvoiceHandler: Codeunit "NVR InvoiceHandler";
+        InvoiceHandler: Codeunit "NVR InvoiceSalesOrderHandler";
+        ValidationHandler: Codeunit "NVR InvoiceHandler";
+        NewInvoice: Record "NVR Invoices";
     begin
         if Rec.InvoiceID <> '' then begin
+            Message('Invoice ID: %1', Rec.InvoiceID);
             // Load Total Amount Due and Remaining Amount
             if Rec.SalesOrderID <> '' then begin
                 if SalesOrder.Get(Rec.SalesOrderID) then begin
                     TotalAmountDue := SalesOrder."TotalAmount";
-                    RemainingAmount := InvoiceHandler.CalcRemainingAmount(Rec.SalesOrderID);
+                    RemainingAmount := ValidationHandler.CalcRemainingAmount(Rec.SalesOrderID);
                 end;
             end;
 
@@ -140,7 +143,15 @@ page 50112 "NVR Invoice Document"
             // Update the page to reflect the changes
             CurrPage.Update();
         end else begin
-            Error('Invoice with ID %1 not found.', Rec.InvoiceID);
+            Message('No Invoice ID found. Generating a new Invoice ID.');
+            // Generate a new Invoice ID
+            NewInvoice := InvoiceHandler.AddNewInvoice();
+
+            // Reload the record to ensure the page is bound to the correct record
+            if Rec.Get(NewInvoice.InvoiceID) then
+                Message('New Invoice ID: %1', NewInvoice.InvoiceID);
+                Rec := NewInvoice; // Set the current record to the new invoice
+                //CurrPage.Update(); // Refresh the page to display the new Invoice ID
         end;
     end;
 
@@ -149,6 +160,7 @@ page 50112 "NVR Invoice Document"
         RemainingAmount: Decimal;
         AmountPaid: Decimal;
         RemainingAmountStyle: Text;
+
 
     procedure ValidateInvoiceAmount()
     var
@@ -218,35 +230,36 @@ page 50112 "NVR Invoice Document"
     var
         SalesOrder: Record "NVR Sales Orders";
         InvoiceRecord: Record "NVR Invoices";
-        Invoicehandler: Codeunit "NVR InvoiceHandler";
+        InvoiceHandler: Codeunit "NVR InvoiceHandler";
     begin
         // Load the current record into the variable
         InvoiceRecord := Rec;
 
-        if InvoiceRecord.SalesOrderID <> '' then begin
-            if SalesOrder.Get(InvoiceRecord.SalesOrderID) then begin
-                TotalAmountDue := SalesOrder."TotalAmount";
-                InvoiceRecord.Currency := SalesOrder.Currency;
-            end else begin
-                TotalAmountDue := 0;
-                InvoiceRecord.Currency := '';
-            end;
-        end else begin
-            TotalAmountDue := 0;
-            InvoiceRecord.Currency := '';
-        end;
+        // Validate if a Sales Order ID is provided
+        if InvoiceRecord.SalesOrderID = '' then
+            Error('Error: No Sales Order ID is provided. Please select a valid Sales Order.');
 
-        // Calculate Remaining Amount
+        // Check if the Sales Order exists
+        if not SalesOrder.Get(InvoiceRecord.SalesOrderID) then
+            Error('Error: Sales Order with ID %1 not found.', InvoiceRecord.SalesOrderID);
+
+        // Calculate the Remaining Amount for the Sales Order
         RemainingAmount := InvoiceHandler.CalcRemainingAmount(InvoiceRecord.SalesOrderID);
 
-        // Inject the data back into Rec to reflect it on the page
+        // Validate if the Sales Order has remaining amount to invoice
+        if RemainingAmount = 0 then
+            Error('Error: Unable to add a new invoice to this Sales Order as it is fully invoiced. Please select another Sales Order.');
+
+        // Update Total Amount Due and Currency from the Sales Order
+        TotalAmountDue := SalesOrder."TotalAmount";
+        InvoiceRecord.Currency := SalesOrder.Currency;
+
+        // Inject the updated data back into Rec to reflect it on the page
         Rec := InvoiceRecord;
 
-        // Update the page to reflect the changes
+        // Refresh the page to display the updated values
         CurrPage.Update();
     end;
-
-    
 
     procedure CalcAmountPaid(InvoiceID: Code[20]): Decimal
     var
