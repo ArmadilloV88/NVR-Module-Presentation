@@ -26,8 +26,6 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Overview)
-            //It can show a pie or bar graph that shows the difference between the totalnumber of sales orders, invoices and payments
             group(FinanceActivitiesGroup)
             {
                 Caption = 'Finance Activities';
@@ -37,7 +35,6 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Finances)
             group(SalesActivitiesGroup)
             {
                 Caption = 'Sales Activities';
