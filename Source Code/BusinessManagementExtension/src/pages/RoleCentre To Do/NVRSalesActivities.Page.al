@@ -58,14 +58,10 @@ page 50123 "NVR Sales Activities"
         TotalSalesOrderAmount := GetTotalSalesOrderAmount(); //Sales Activities
         MostSoldProduct := GetMostSoldProduct(); //Sales Activities
         MostListedCategory := GetMostListedCategory(); //Sales Activities
-        Message('Most Sold Product: %1', MostSoldProduct); //Debugging message
-        Message('Most Listed Category: %1', MostListedCategory); //Debugging message
-        Message('Total Sales Order Amount: %1', TotalSalesOrderAmount); //Debugging message
         //  
     end;
 
     var
-        //OpenSalesOrdersCount: Integer;
         PaidSalesOrdersCount: Integer;
         UnPaidSalesOrdersCount: Integer;
         TotalSalesOrderAmount : Decimal;

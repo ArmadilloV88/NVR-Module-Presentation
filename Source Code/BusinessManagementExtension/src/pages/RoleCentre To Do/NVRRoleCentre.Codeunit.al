@@ -127,7 +127,6 @@ codeunit 50109 "NVR RoleCentreHandler"
         end;
         exit(HighestPaymentAmount);
     end;
-
     procedure GetMostSoldProduct(): Text[100]
     var
         ProductsRec: Record "NVR SalesOrderLineProducts";
@@ -157,7 +156,6 @@ codeunit 50109 "NVR RoleCentreHandler"
         else
             exit('-');
     end;
-
     procedure GetMostListedCategory(): Text[100]
     var
         Products: Record "NVR Products";
@@ -196,7 +194,6 @@ codeunit 50109 "NVR RoleCentreHandler"
         else
             exit('-');
     end;
-
     procedure GetTotalSalesOrderAmount(): Decimal
     var
         SalesOrderRec: Record "NVR Sales Orders";

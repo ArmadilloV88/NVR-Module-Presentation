@@ -16,40 +16,63 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-
+            part(Activities; "Small Business Owner Act.")
+            {
+                Caption = 'Here are main your activities';
+                ApplicationArea = All;
+            }
             group(OverviewActivities)
             {
                 Caption = 'Overview';
                 part(Overview; "NVR Overview Activities")
                 {
-                    Caption = 'Overview Activities';
+                    Caption = 'Loyalty overview activities';
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Overview)
-            //It can show a pie or bar graph that shows the difference between the totalnumber of sales orders, invoices and payments
             group(FinanceActivitiesGroup)
             {
-                Caption = 'Finance Activities';
+                Caption = 'Loyalty Finance Activities';
                 part(Finance; "NVR Finance Activities")
                 {
                     Caption = 'Finance Activities';
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Finances)
+            part("FinancePerformance";"Finance Performance")
+            {
+                Caption = 'Finance Performance';
+                ApplicationArea = All;
+            }
             group(SalesActivitiesGroup)
             {
-                Caption = 'Sales Activities';
+                Caption = 'Loyalty Sales Activities';
                 part(Sales; "NVR Sales Activities")
                 {
                     Caption = 'Sales Activities';
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Sales)
-            //can add a listpart that shows the top customer loyalty leaderboard
-            //can then have a pie chart that shows the top 10 customers by paid sales orders
+            part("SalesPipeline"; "Sales Pipeline Chart")
+            {
+                Caption = 'Sales Pipeline Chart';
+                ApplicationArea = All;
+            }
+            part("Sales&Relationships";"Sales & Relationship Mgr. Act.")
+            {
+                Caption = 'Sales & Relationship Manager Activities';
+                ApplicationArea = All;
+            }
+            part("TopFiveSalesCustomers";"Help And Chart Wrapper")
+            {
+                Caption = 'Help And Chart Wrapper';
+                ApplicationArea = All;
+            }
+            part(CustomerLoyaltyLeaderboard; "NVR CustomerLytLeaderboard")
+            {
+                Caption = 'Top Customer Loyalty Leaderboard';
+                ApplicationArea = All;
+            }
         }
     }
 
@@ -91,7 +114,7 @@ page 50101 "NVR Custom Role Center"
                 }
             }
         }
-
+//Next to finish develop is the functionality linking to the Rolecentre Page
         area(Creation)
         {
             action(AddSalesOrder)
@@ -108,6 +131,34 @@ page 50101 "NVR Custom Role Center"
                 RunPageMode = Create;
                 ApplicationArea = All;
             }
+        }
+        area(Processing)
+        {
+            group(General)
+            {
+                Caption = 'General';
+                action(ShowAllCustomers)
+                {
+                    Caption = 'Show All Customers';
+                    RunObject = Page "Customer List";
+                    ApplicationArea = All;
+                }
+                action(ShowAllLoyaltyCustomers)
+                {
+                    Caption = 'Show All Customers in Loyalty Program';
+                    Image = LineDiscount;
+                    RunObject = Page "Customer List";
+                    ApplicationArea = All;
+                }
+
+                action(ShowAllVendors)
+                {
+                    Caption = 'Show All Vendors';
+                    RunObject = Page "Vendor List";
+                    ApplicationArea = All;
+                }
+            }
+
         }
 
         area(Reporting)
