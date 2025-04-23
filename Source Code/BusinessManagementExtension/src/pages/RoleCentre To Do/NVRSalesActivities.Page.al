@@ -15,7 +15,7 @@ page 50123 "NVR Sales Activities"
 
                 field(UnPaidSalesOrders; UnPaidSalesOrdersCount)
                 {
-                    Caption = 'Open Sales Orders';
+                    Caption = 'UnPaid Sales Orders';
                     ToolTip = 'Shows the number of open sales orders.';
                     StyleExpr = 'UnFavorable';
                 }

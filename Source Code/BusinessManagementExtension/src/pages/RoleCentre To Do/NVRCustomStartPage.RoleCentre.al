@@ -16,9 +16,19 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
+            part (Graph;"Help And Chart Wrapper")
+            {
+                Caption = 'Help & Chart';
+                ApplicationArea = All;
+            }
             part(Activities; "Small Business Owner Act.")
             {
-                Caption = 'Here are main your activities';
+                Caption = 'Here are your main activities';
+                ApplicationArea = All;
+            }
+            part(AnotherChart; "Opportunity Chart")
+            {
+                Caption = 'Opportunity Chart';
                 ApplicationArea = All;
             }
             group(OverviewActivities)
@@ -30,6 +40,11 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
+            part(FinanceChart; "Cash Flow Forecast Chart")
+            {
+                Caption = 'Cash Flow Forecast Chart';
+                ApplicationArea = All;
+            }
             group(FinanceActivitiesGroup)
             {
                 Caption = 'Loyalty Finance Activities';
@@ -38,6 +53,11 @@ page 50101 "NVR Custom Role Center"
                     Caption = 'Finance Activities';
                     ApplicationArea = All;
                 }
+            }
+            part(SalesChart; "Sales Pipeline Chart")
+            {
+                Caption = 'Sales Pipeline Chart';
+                ApplicationArea = All;
             }
             //can add a graph that helps represent the group (Finances)
             group(SalesActivitiesGroup)
@@ -49,86 +69,16 @@ page 50101 "NVR Custom Role Center"
                     ApplicationArea = All;
                 }
             }
-            //can add a graph that helps represent the group (Sales)
-            //can add a listpart that shows the top customer loyalty leaderboard
-            //can then have a pie chart that shows the top 10 customers by paid sales orders
+            part(LeaderBoard; "NVR CustomerLytLeaderboard")
+            {
+                Caption = 'Customer Loyalty Leaderboard';
+                ApplicationArea = All;
+            }
         }
     }
 
     actions
     {
-        // area(Sections)
-        // {
-        //     group(SalesDocuments)
-        //     {
-        //         Caption = 'Sales Documents';
-        //         action(OpenSalesOrders)
-        //         {
-        //             Caption = 'Open Sales Orders';
-        //             RunObject = Page "NVR Sales Order List";
-        //             ApplicationArea = All;
-        //         }
-        //         action(OpenInvoices)
-        //         {
-        //             Caption = 'Open Invoices';
-        //             RunObject = Page "NVR Invoice List";
-        //             ApplicationArea = All;
-        //         }
-        //     }
-
-        //     // group(FinanceDocuments)
-        //     // {
-        //     //     Caption = 'Finance Documents';
-        //     //     action(OpenPayments)
-        //     //     {
-        //     //         Caption = 'Open Payments';
-        //     //         RunObject = Page "NVR Payment List";
-        //     //         ApplicationArea = All;
-        //     //     }
-        //     //     action(OpenUnpaidInvoices)
-        //     //     {
-        //     //         Caption = 'Open Unpaid Invoices';
-        //     //         RunObject = Page "NVR Invoice List";
-        //     //         ApplicationArea = All;
-        //     //     }
-        //     // }
-        // }
-
-        // area(Creation)
-        // {
-        //     action(AddSalesOrder)
-        //     {
-        //         Caption = 'Add Sales Order';
-        //         RunObject = Page "NVR Sales Order Card";
-        //         RunPageMode = Create;
-        //         ApplicationArea = All;
-        //     }//works fine
-        //     // action(AddInvoice)
-        //     // {
-        //     //     Caption = 'Add Invoice';
-        //     //     RunObject = Page "NVR Invoice Document";
-        //     //     RunPageMode = Create;
-        //     //     ApplicationArea = All;
-        //     // } will cause a break (weird bug)
-        //     action(AddCustomer){
-        //         Caption = 'Add Customer';
-        //         RunObject = Page "NVR Customer Card";
-        //         RunPageMode = Create;
-        //         ApplicationArea = All;
-        //     }
-        //     // action(AddProduct){
-        //     //     Caption = 'Add Product';
-        //     //     RunObject = Page "NVR Product Card";
-        //     //     RunPageMode = Create;
-        //     //     ApplicationArea = All;
-        //     // }will cause a break (similiar to the invoice action)
-        //     // action(AddPayments){
-        //     //     Caption = 'Add Payment';
-        //     //     RunObject = Page "Payment Journal";
-        //     //     RunPageMode = Create;
-        //     //     ApplicationArea = All;
-        //     // } will cause a break (similiar to the invoice action)
-        // }
         area(Processing)
         {
             group(SalesOrder)
@@ -173,6 +123,24 @@ page 50101 "NVR Custom Role Center"
                 }
             }
         }
+        // area(Creation)
+        // {
+        //     // action(NewCustomer)
+        //     // {
+        //     //     Caption = 'New Customer';
+        //     //     Image = New;
+        //     //     ApplicationArea = All;
+        //     //     // trigger OnAction()
+        //     //     // var
+        //     //     //     CustomerRec: Record "NVR Customers";
+        //     //     // begin
+        //     //     //     Clear(CustomerRec); // Ensure it's a blank record
+        //     //     //     Page.RunModal(Page::"NVR Customer Card");
+        //     //     // end;
+        //     //     RunObject = Page "NVR Customer Card";
+        //     // }
+
+        // }
         area(Reporting)
         {
             /*action(SalesReport)

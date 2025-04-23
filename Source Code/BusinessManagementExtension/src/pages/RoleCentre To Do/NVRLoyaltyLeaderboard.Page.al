@@ -5,7 +5,7 @@ page 50132 "NVR CustomerLytLeaderboard"
     InsertAllowed = false;
     PageType = ListPart;
     SourceTable = "NVR Customers";
-    SourceTableView = ORDER(Descending) WHERE("Loyalty Points" = filter(<>0)); // Optional: filter out zero points
+    SourceTableView = ORDER(Descending) WHERE("Loyalty Points" = filter(>= 0));
     Caption = 'Customer Loyalty Leaderboard';
     ApplicationArea = All;
 
