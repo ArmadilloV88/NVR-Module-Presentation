@@ -1,4 +1,4 @@
-pageextension 50101 CustomerCardExt extends "Customer List"
+pageextension 50101 CustomerListExt extends "Customer List"
 {
     actions
     {
@@ -25,6 +25,21 @@ pageextension 50101 CustomerCardExt extends "Customer List"
                         Message('Customer %1 has been registered for the loyalty program.', Rec.Name);
                     end else
                         Message('Customer %1 is already registered.', Rec.Name);
+                end;
+            }
+        }
+        addfirst(processing)
+        {
+            action(NavToCustLytRolecentre)
+            {
+                Caption = 'Loyalty Role Center';
+                ApplicationArea = All;
+                Image = DataEntry;
+                trigger OnAction()
+                var
+                    CustomerRoleCenter: Page "NVR Custom Role Center";
+                begin
+                    CustomerRoleCenter.RunModal();
                 end;
             }
         }

@@ -82,22 +82,22 @@ page 50100 "NVR Customer List"
             }
         }
 
-        area(Creation)
-        {
-            action(NewCustomer)
-            {
-                Caption = 'New Customer';
-                Image = New;
-                ApplicationArea = All;
+        // area(Creation)
+        // {
+        //     action(NewCustomer)
+        //     {
+        //         Caption = 'New Customer';
+        //         Image = New;
+        //         ApplicationArea = All;
 
-                trigger OnAction()
-                var
-                    NVRNewCustomer: Record "NVR Customers";
-                    CardPage: Page "Customer List";
-                begin
-                    CardPage.RunModal();
-                end;
-            }
-        }
+        //         trigger OnAction()
+        //         var
+        //             NVRNewCustomer: Record "NVR Customers";
+        //             CardPage: Page "Customer List";
+        //         begin
+        //             CardPage.RunModal();
+        //         end;
+        //     }
+        // }
     }
 }

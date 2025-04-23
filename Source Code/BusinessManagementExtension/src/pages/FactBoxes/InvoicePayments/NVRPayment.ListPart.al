@@ -1,5 +1,6 @@
 page 50117 "NVR Payment ListPart"
 {
+    Caption = 'Invoice Payments';
     PageType = ListPart;
     SourceTable = "NVR Payments";
     ApplicationArea = All;
