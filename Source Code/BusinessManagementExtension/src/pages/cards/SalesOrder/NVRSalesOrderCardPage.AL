@@ -2,6 +2,7 @@ page 50111 "NVR Sales Order Card"
 {
     PageType = Card;
     SourceTable = "NVR Sales Orders";
+    InsertAllowed = false;
 
     layout
     {
@@ -47,7 +48,7 @@ page 50111 "NVR Sales Order Card"
                 {
                     Caption = 'Payment Status';
                     ApplicationArea = All;
-                    Editable = true;
+                    Editable = false;
                     //need to ensure it shows the caption of the enum, similiar to a drop down list
                 }
 

@@ -13,15 +13,21 @@ codeunit 50105 "NVR InvoiceHandler"
         SalesOrderLineHandler : Codeunit "NVR SalesOrderLineHandler";
     begin
         TotalInvoiceAmounts := 0;
+        if SalesOrderID <> '' then begin
+            // Calculate the sum of all invoice amounts for the specified Sales Order ID
+            InvoiceRecord.SetRange("SalesOrderID", SalesOrderID);
+            if InvoiceRecord.FindSet() then
+                repeat
+                    TotalInvoiceAmounts += InvoiceRecord."InvoiceAmount";
+                until InvoiceRecord.Next() = 0;
+            exit(SalesOrderLineHandler.GetSalesOrderTotal(SalesOrderID) - TotalInvoiceAmounts);    
+        end else begin
+            exit(0);
+        end;
 
-        // Calculate the sum of all invoice amounts for the specified Sales Order ID
-        InvoiceRecord.SetRange("SalesOrderID", SalesOrderID);
-        if InvoiceRecord.FindSet() then
-            repeat
-                TotalInvoiceAmounts += InvoiceRecord."InvoiceAmount";
-            until InvoiceRecord.Next() = 0;
+        
 
-        exit(SalesOrderLineHandler.GetSalesOrderTotal(SalesOrderID) - TotalInvoiceAmounts);
+        
     end;
 
     procedure SetSalesOrderID(SalesOrderID: Code[20])

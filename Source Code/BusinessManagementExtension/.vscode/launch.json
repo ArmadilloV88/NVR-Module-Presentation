@@ -10,7 +10,7 @@
         "server": "https://CVRDev.dev.navertica.com",
         "serverInstance": "BC",
         "authentication": "AAD",
-        "startupObjectId": 50101, //22 is the main page
+        "startupObjectId": 50101, //22 is the customer list (50101 is the custom role centre page)
         "startupObjectType": "Page",
         "breakOnError": true,
         "launchBrowser": true,

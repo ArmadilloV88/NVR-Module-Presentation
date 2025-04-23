@@ -20,26 +20,26 @@ pageextension 50113 "NVR Customer List Ext" extends "NVR Customer List"
             }
         }
     }
-    actions
-    {
-        addlast(Processing)
-        {
-            /*action(CalculateLoyaltyPoints)
-            {
-                Caption = 'Calculate Loyalty Points';
-                Image = Calculate;
-                ApplicationArea = All;
+    // actions
+    // {
+    //     addlast(Processing)
+    //     {
+    //         /*action(CalculateLoyaltyPoints)
+    //         {
+    //             Caption = 'Calculate Loyalty Points';
+    //             Image = Calculate;
+    //             ApplicationArea = All;
 
-                trigger OnAction()
-                var
-                    LoyaltyHandler: Codeunit "NVR Loyalty Points Handler";
-                begin
-                    LoyaltyHandler.UpdateAllCustomers();
-                    Message('Loyalty points and levels have been updated for all customers.');
-                end;
-            }*/
-        }
-    }
+    //             trigger OnAction()
+    //             var
+    //                 LoyaltyHandler: Codeunit "NVR Loyalty Points Handler";
+    //             begin
+    //                 LoyaltyHandler.UpdateAllCustomers();
+    //                 Message('Loyalty points and levels have been updated for all customers.');
+    //             end;
+    //         }*/
+    //     }
+    // }
 
     local procedure GetLoyaltyPoints(): Integer
     var

@@ -145,12 +145,15 @@ page 50102 "NVR Invoice List"
                     
                     NewInvoice: Record "NVR Invoices";
                 begin
-                    if ValidationHandler.CalcRemainingAmount(Handler.GetStoredSalesOrderID()) = 0 then 
-                    begin
-                        Error('Error : Unable to add a new invoice to this sales order as the sales order is fully invoiced');
-                        exit;
+                    if Handler.GetStoredSalesOrderID() <> '' then begin
+                        if ValidationHandler.CalcRemainingAmount(Handler.GetStoredSalesOrderID()) = 0 then 
+                        begin
+                            Error('Error : Unable to add a new invoice to this sales order as the sales order is fully invoiced');
+                            exit;
+                            
+                        end;
                     end;
-                
+
                     // Add a new invoice using the Codeunit
                     NewInvoice := InvoiceHandler.AddNewInvoice();
                     //Message('New Invoice Created: %1 SalesOrderID : %2' , NewInvoice.InvoiceID, NewInvoice.SalesOrderID);
@@ -192,7 +195,7 @@ page 50102 "NVR Invoice List"
     begin
         // Retrieve the SalesOrderID using the GetSalesOrderID procedure
         SalesOrderID := Handler.GetStoredSalesOrderID();
-        Message('Sales Order ID Retrieved: %1', SalesOrderID);
+        //Message('Sales Order ID Retrieved: %1', SalesOrderID);
 
         // Apply a filter to only show invoices with the retrieved SalesOrderID
         if SalesOrderID <> '' then

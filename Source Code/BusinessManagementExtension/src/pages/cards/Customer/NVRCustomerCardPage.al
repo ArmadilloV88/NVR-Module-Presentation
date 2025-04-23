@@ -17,7 +17,7 @@ page 50110 "NVR Customer Card"
                 {
                     ApplicationArea = All;
                     Editable = true;
-                    TableRelation = Customer."No."; // Links to the "No." field in the base Customer table
+                    TableRelation = "Customer"; // Links to the "No." field in the base Customer table
                     trigger OnValidate()
                     var
                         Customer: Record Customer;

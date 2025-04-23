@@ -1,5 +1,9 @@
 page 50106 "NVR Product Category List"
 {
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    DeleteAllowed = false;
+    ApplicationArea = All;
     Caption = 'Product Categories List';
     PageType = List;
     SourceTable = "NVR Product Categories";
