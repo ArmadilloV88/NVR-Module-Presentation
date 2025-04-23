@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+      {
+        "name": "CVRDev.dev.navertica.com",
+        "request": "launch",
+        "type": "al",
+        "environmentType": "OnPrem",
+        "server": "https://CVRDev.dev.navertica.com",
+        "serverInstance": "BC",
+        "authentication": "AAD",
+        "startupObjectId": 50101, //22 is the customer list (50101 is the custom role centre page)
+        "startupObjectType": "Page",
+        "breakOnError": true,
+        "launchBrowser": true,
+        "enableLongRunningSqlStatements": true,
+        "enableSqlInformationDebugger": true,
+        "primaryTenantDomain": "navertica.com",
+        "tenant": "default"
+      }
+    ]
+}
