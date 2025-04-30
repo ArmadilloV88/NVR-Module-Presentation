@@ -1,3 +1,8 @@
+/*
+###COMMENTS###
+
+##############
+*/
 page 50100 "NVR Customer List"
 {
     Caption = 'Customer List';
@@ -81,23 +86,5 @@ page 50100 "NVR Customer List"
                 end;
             }
         }
-
-        // area(Creation)
-        // {
-        //     action(NewCustomer)
-        //     {
-        //         Caption = 'New Customer';
-        //         Image = New;
-        //         ApplicationArea = All;
-
-        //         trigger OnAction()
-        //         var
-        //             NVRNewCustomer: Record "NVR Customers";
-        //             CardPage: Page "Customer List";
-        //         begin
-        //             CardPage.RunModal();
-        //         end;
-        //     }
-        // }
     }
 }

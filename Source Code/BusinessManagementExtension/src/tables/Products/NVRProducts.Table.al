@@ -1,3 +1,8 @@
+/*
+###COMMENTS###
+This can be replaced with the base Items table + Reworking logic on the sales order line functionality.
+##############
+*/
 table 50105 "NVR Products"
 {
     Caption = 'Products';

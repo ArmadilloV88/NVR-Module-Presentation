@@ -1,3 +1,12 @@
+/*
+###COMMENTS###
+Unsure if there is a payments table in the base application 
+however if there isnt we can either rework the logic to accept 
+invoices as "assumed paid" so the status will always be Paid or 
+we can keep the table and itll have to be manuel allocations to 
+the invoices on which payments correspond to which invoices.
+##############
+*/
 table 50103 "NVR Payments"
 {
     DataClassification = CustomerContent;

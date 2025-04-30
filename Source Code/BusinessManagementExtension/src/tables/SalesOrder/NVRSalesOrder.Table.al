@@ -1,3 +1,10 @@
+/*
+###COMMENTS###
+can be replaced with the base sales order line table 
+(will probably need to use a base correlation table to provide 
+the invoices that are linked to the sales orders.)
+##############
+*/
 table 50101 "NVR Sales Orders"
 {
     DataClassification = CustomerContent;

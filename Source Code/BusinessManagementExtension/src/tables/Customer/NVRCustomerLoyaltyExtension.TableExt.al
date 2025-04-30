@@ -1,3 +1,9 @@
+/*
+###COMMENTS###
+Must be kept intact, only thing that needs to change is the table that is being 
+expanded upon (NVR Customers) is changed to the base (Customer) table
+##############
+*/
 tableextension 50108 "NVR Customer Loyalty Extension" extends "NVR Customers"
 {
     fields

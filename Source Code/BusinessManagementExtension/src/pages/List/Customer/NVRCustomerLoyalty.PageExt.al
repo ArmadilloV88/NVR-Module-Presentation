@@ -1,8 +1,15 @@
+/*
+###COMMENTS###
+must stay intact as it is or can be ultered by removing 
+the Register for Loyalty Program action if data feeding 
+to the base application took place
+##############
+*/
 pageextension 50101 CustomerListExt extends "Customer List"
 {
     actions
     {
-        addlast(Processing)
+        addlast("&Customer")
         {
             action(RegisterForLoyalty)
             {

@@ -1,3 +1,10 @@
+/*
+###COMMENTS###
+This is the main rolecentre page for the loyalty system. 
+Its purpose is to allow the user to view relevant data based 
+of the application
+##############
+*/
 page 50101 "NVR Custom Role Center"
 {
     PageType = RoleCenter;
@@ -110,6 +117,13 @@ page 50101 "NVR Custom Role Center"
                     Caption = 'View Customers';
                     RunObject = Page "NVR Customer List";
                     ApplicationArea = All;
+                }
+                action(NewCustomer)
+                {
+                    Caption = 'New Customer';
+                    Image = New;
+                    ApplicationArea = All;
+                    RunObject = Page "Customer List";
                 }
             }
             group(Products)

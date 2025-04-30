@@ -1,3 +1,10 @@
+/*
+###COMMENTS###
+Can be completely removed if decided not to keep the treading 
+like approach and just linking the items/products directly to the 
+sales order table
+##############
+*/
 table 50104 "NVR Sales Order Line"
 {
     Caption = 'Sales Order Line';

@@ -1,3 +1,12 @@
+/*
+###COMMENTS###
+Can be either totally removed or kept for if you wish to devide 
+a sales order into having multiple products linked to it (similiar to threading) 
+or can completely eliminate this table and link the items/products directly to 
+the sales order line table (this is the preferred method as it will be easier to 
+manage and less complex)
+##############
+*/
 table 50107 "NVR SalesOrderLineProducts"
 //used to store the product to sales order list correlation
 //specifies the relationship between the 2 tables

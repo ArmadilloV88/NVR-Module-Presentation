@@ -1,3 +1,11 @@
+/*
+###COMMENTS###
+Table can be removed then all the references will need to be changed to Base Invoice 
+table for data feeding. This might require additional work to ensure the correct 
+table fields are called and use correctly.
+##############
+*/
+
 table 50102 "NVR Invoices"
 {
     DataClassification = CustomerContent;

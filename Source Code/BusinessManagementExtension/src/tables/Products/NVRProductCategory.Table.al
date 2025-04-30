@@ -1,3 +1,8 @@
+/*
+###COMMENTS###
+Can be eliminated if the products table is replaced with the base application items table.
+##############
+*/
 table 50106 "NVR Product Categories"
 {
     DataClassification = CustomerContent;

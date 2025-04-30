@@ -1,3 +1,9 @@
+/*
+###COMMENTS###
+Table can be removed then all the references will 
+need to be changed to Base Customer table for data feeding.
+##############
+*/
 table 50100 "NVR Customers"
 {
     TableType = Normal;
