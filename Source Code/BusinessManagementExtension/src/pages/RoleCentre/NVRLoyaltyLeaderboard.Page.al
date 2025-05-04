@@ -5,7 +5,7 @@ page 50132 "NVR CustomerLytLeaderboard"
     InsertAllowed = false;
     PageType = ListPart;
     SourceTable = "NVR Customers";
-    SourceTableView = ORDER(Descending) WHERE("Loyalty Points" = filter(>= 0));
+    SourceTableView = SORTING("Loyalty Points") ORDER(Descending) WHERE("Loyalty Points" = filter(>= 0));
     Caption = 'Customer Loyalty Leaderboard';
     ApplicationArea = All;
 
@@ -18,6 +18,13 @@ page 50132 "NVR CustomerLytLeaderboard"
                 field("No."; Rec."CustomerID") { Caption = 'Customer No.'; }
                 field(Name; Rec.Name) { Caption = 'Customer Name'; }
                 field("Loyalty Points"; Rec."Loyalty Points") { Caption = 'Loyalty Points'; }
+                field("Loyalty Level"; Rec."Loyalty Level")
+                {
+                    Caption = 'Loyalty Level';
+                    ApplicationArea = All;
+                    Style = Strong; // Makes the text bold
+                    //StyleExpr = GetLoyaltyLevelStyle(); // Applies conditional styling
+                }
             }
         }
     }

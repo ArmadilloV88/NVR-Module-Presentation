@@ -1,3 +1,6 @@
+/*COMMENTS
+There is a bug here somewhere causing the list to freeze
+*/
 page 50104 "NVR Sales Order Line List"
 {
     Caption = 'Sales Order Line List';
@@ -67,23 +70,33 @@ page 50104 "NVR Sales Order Line List"
                 trigger OnAction()
                 var
                     SalesOrderLineHandler: Codeunit "NVR SalesOrderLineHandler";
+                    NewSalesOrderLine: Record "NVR Sales Order Line";
+                    UniqueLineID: Code[20];
                     CanAdd: Boolean;
                 begin
                     // Ensure a valid Sales Order is selected
                     if Rec.SalesOrderID = '' then
-                        Rec.SalesOrderID := SalesOrderLineHandler.GetSalesOrderID(); // Get the Sales Order ID from the handler
+                        Rec.SalesOrderID := SalesOrderLineHandler.GetSalesOrderID();
 
                     // Check if a new line can be added
                     CanAdd := SalesOrderLineHandler.CanAddMore(Rec.SalesOrderID);
                     // if not CanAdd then
                     //     Error('Cannot add more lines to this Sales Order. The total line amount exceeds the sales order total amount.');
 
+                    // Generate a unique Sales Order Line ID
+                    UniqueLineID := SalesOrderLineHandler.GenerateUniqueSalesOrderLineID();
+
+                    // Initialize and insert the new Sales Order Line record
+                    NewSalesOrderLine.Init();
+                    NewSalesOrderLine."Sales Order Line ID" := UniqueLineID;
+                    NewSalesOrderLine.SalesOrderID := Rec.SalesOrderID;
+                    NewSalesOrderLine.Insert(true);
+
                     // Commit the transaction before opening the page
                     COMMIT;
 
-
-                    // Open the Sales Order Line Card page
-                    Page.RunModal(Page::"NVR Sales Order Line Card");
+                    // Open the Sales Order Line Card page with the new record
+                    Page.RunModal(Page::"NVR Sales Order Line Card", NewSalesOrderLine);
                 end;
             }
             action(ViewSalesOrderLine)

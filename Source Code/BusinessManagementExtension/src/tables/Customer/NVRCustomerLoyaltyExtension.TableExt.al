@@ -20,4 +20,11 @@ tableextension 50108 "NVR Customer Loyalty Extension" extends "NVR Customers"
             OptionMembers = Bronze, Silver, Gold, Platinum;
         }
     }
+    keys
+    {
+        key(PrimaryKey; "Loyalty Points")
+        {
+            
+        }
+    }
 }

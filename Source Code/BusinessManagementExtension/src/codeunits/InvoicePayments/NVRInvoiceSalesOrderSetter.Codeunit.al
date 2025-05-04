@@ -20,7 +20,7 @@ codeunit 50104 "NVR InvoiceSalesOrderHandler"
         // Initialize and create a new invoice
         NewInvoice.Init();
         NewInvoice."InvoiceID" := GenerateUniqueInvoiceID();
-        Message('New Invoice ID: %1', NewInvoice."InvoiceID");
+        //Message('New Invoice ID: %1', NewInvoice."InvoiceID");
         NewInvoice."SalesOrderID" := StoredSalesOrderID;
 
         // Insert the new invoice into the database

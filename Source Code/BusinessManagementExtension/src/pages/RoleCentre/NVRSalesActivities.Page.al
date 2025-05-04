@@ -25,11 +25,29 @@ page 50123 "NVR Sales Activities"
                     ToolTip = 'Shows the number of paid sales orders.';
                     StyleExpr = 'Favorable';
                 }
+                field(PartiallyPaidSalesOrders; PartialPaidSalesOrdersCount)
+                {
+                    Caption = 'Partially Paid Sales Orders';
+                    ToolTip = 'Shows the number of partially paid sales orders.';
+                    StyleExpr = 'Attention';
+                }
                 field(TotalSalesOrderAmount; TotalSalesOrderAmount)
                 {
                     Caption = 'Total Sales Order Amount';
                     ToolTip = 'Shows the total amount of all sales orders.';
                     //StyleExpr = 'Favorable';
+                }
+                field(PaidSalesOrderAmount; PaidSalesOrderAmount)
+                {
+                    Caption = 'Paid Sales Order Amount';
+                    ToolTip = 'Shows the total amount of paid sales orders.';
+                    StyleExpr = 'Favorable';
+                }
+                field(UnPaidSalesOrderAmount; UnPaidSalesOrderAmount)
+                {
+                    Caption = 'UnPaid Sales Order Amount';
+                    ToolTip = 'Shows the total amount of unpaid sales orders.';
+                    StyleExpr = 'UnFavorable';
                 }
             }
             group(TextFields)
@@ -58,21 +76,45 @@ page 50123 "NVR Sales Activities"
         TotalSalesOrderAmount := GetTotalSalesOrderAmount(); //Sales Activities
         MostSoldProduct := GetMostSoldProduct(); //Sales Activities
         MostListedCategory := GetMostListedCategory(); //Sales Activities
+        PaidSalesOrderAmount := GetTotalPaidSalesOrderAmount(); //Sales Activities
+        UnPaidSalesOrderAmount := GetTotalUnPaidSalesOrderAmount(); //Sales Activities
+        PartialPaidSalesOrdersCount := GetPartiallySalesOrdersCount(); //Sales Activities
         //  
     end;
 
     var
         PaidSalesOrdersCount: Integer;
         UnPaidSalesOrdersCount: Integer;
+        PartialPaidSalesOrdersCount : Integer;
         TotalSalesOrderAmount : Decimal;
+        PaidSalesOrderAmount: Decimal;
+        UnPaidSalesOrderAmount: Decimal;
         MostSoldProduct: Text[100];
         MostListedCategory: Text[100];
 
+    local procedure GetPartiallySalesOrdersCount(): Integer
+    var
+        Handler : Codeunit "NVR RoleCentreHandler";
+    begin
+        exit(Handler.GetnumberOfPartiallyPaidSalesOrders())
+    end;
     local procedure GetTotalSalesOrderAmount(): Decimal
     var
         Handler : Codeunit "NVR RoleCentreHandler";
     begin
         exit(Handler.GetTotalSalesOrderAmount())
+    end;
+    local procedure GetTotalPaidSalesOrderAmount(): Decimal
+    var
+        Handler : Codeunit "NVR RoleCentreHandler";
+    begin
+        exit(Handler.GetTotalPaidSalesOrderAmount())
+    end;
+    local procedure GetTotalUnPaidSalesOrderAmount(): Decimal
+    var
+        Handler : Codeunit "NVR RoleCentreHandler";
+    begin
+        exit(Handler.GetTotalUnPaidSalesOrderAmount())
     end;
     local procedure GetMostSoldProduct(): Text[100]
     var

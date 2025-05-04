@@ -1,7 +1,6 @@
 codeunit 50114 "NVR Sales Order Status Updater"
 {
     Subtype = Normal;
-
     procedure UpdateSalesOrderStatus(SalesOrderRecord: Record "NVR Sales Orders")
     var
         InvoiceRecord: Record "NVR Invoices";
@@ -16,9 +15,6 @@ codeunit 50114 "NVR Sales Order Status Updater"
             repeat
                 TotalAmountPaid += InvoiceRecord."AmountPaid";
             until InvoiceRecord.Next() = 0;
-
-        // Update the payment status based on the total amount paid
-        //Message('Sales Order %1, Total Amount Paid: %2', SalesOrderRecord."SalesOrderID", TotalAmountPaid); // Debugging message
         if TotalAmountPaid >= SalesOrderRecord."TotalAmount" then begin
         SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::Paid;
         SalesOrderRecord."StatusStyle" := 'Favorable';
@@ -29,12 +25,10 @@ codeunit 50114 "NVR Sales Order Status Updater"
             SalesOrderRecord."Payment Status" := Enum::"NVR PaymentStatusEnum"::NotPaid;
             SalesOrderRecord."StatusStyle" := 'UnFavorable';
         end;
-
         // Save the updated sales order record
         if SalesOrderRecord.Modify() then
             Commit(); // Ensure the changes are saved immediately
     end;
-
     procedure UpdateAllSalesOrders()
     var
         SalesOrderRecord: Record "NVR Sales Orders";

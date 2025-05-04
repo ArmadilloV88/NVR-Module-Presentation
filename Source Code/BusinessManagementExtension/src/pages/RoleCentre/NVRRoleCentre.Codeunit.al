@@ -1,5 +1,21 @@
 codeunit 50109 "NVR RoleCentreHandler"
 {
+    Subtype = Normal;
+
+    procedure GetPartiallyPaidInvoicesCount(): Integer
+    var
+        InvoicesRec: Record "NVR Invoices";
+        PartiallyPaidInvoicesCount: Integer;
+    begin
+        //search for all Invoices with the Status type Partially Paid
+        InvoicesRec.SetRange("Status", Enum::"NVR PaymentStatusEnum"::PartiallyPaid);
+        if InvoicesRec.FindSet() then begin
+            repeat
+                PartiallyPaidInvoicesCount := PartiallyPaidInvoicesCount + 1;
+            until InvoicesRec.Next() = 0;
+        end;
+        exit(PartiallyPaidInvoicesCount);
+    end;
     procedure GetnumberOfPaidSalesOrders(): Integer
     var
         SalesOrderRec: Record "NVR Sales Orders";
@@ -31,29 +47,61 @@ codeunit 50109 "NVR RoleCentreHandler"
     procedure GetTotalAmountofPaidInvoices(): Decimal
     var
         InvoicesRec: Record "NVR Invoices";
-        TotalUnPaidAmount: Decimal;
+        PaymentsRec: Record "NVR Payments";
+        TotalPaidAmount: Decimal;
+        PaidAmount: Decimal;
     begin
-        //search for all Invoices with the Status type Not Paid
+        // Paid: add full invoice amount
         InvoicesRec.SetRange("Status", Enum::"NVR PaymentStatusEnum"::Paid);
-        if InvoicesRec.FindSet() then begin
+        if InvoicesRec.FindSet() then
             repeat
-                TotalUnPaidAmount := TotalUnPaidAmount + InvoicesRec."InvoiceAmount";
+                TotalPaidAmount += InvoicesRec."InvoiceAmount";
             until InvoicesRec.Next() = 0;
-        end;
-        exit(TotalUnPaidAmount);
+
+        // Partially Paid: add only the paid portion
+        InvoicesRec.Reset();
+        InvoicesRec.SetRange("Status", Enum::"NVR PaymentStatusEnum"::PartiallyPaid);
+        if InvoicesRec.FindSet() then
+            repeat
+                PaidAmount := 0;
+                PaymentsRec.SetRange("InvoiceID", InvoicesRec."InvoiceID");
+                if PaymentsRec.FindSet() then
+                    repeat
+                        PaidAmount += PaymentsRec."PaymentAmount";
+                    until PaymentsRec.Next() = 0;
+                TotalPaidAmount += PaidAmount;
+            until InvoicesRec.Next() = 0;
+
+        exit(TotalPaidAmount);
     end;
     procedure GetTotalAmountofUnPaidInvoices(): Decimal
     var
         InvoicesRec: Record "NVR Invoices";
+        PaymentsRec: Record "NVR Payments";
         TotalUnPaidAmount: Decimal;
+        PaidAmount: Decimal;
     begin
-        //search for all Invoices with the Status type Not Paid
+        // Not Paid: add full invoice amount
         InvoicesRec.SetRange("Status", Enum::"NVR PaymentStatusEnum"::NotPaid);
-        if InvoicesRec.FindSet() then begin
+        if InvoicesRec.FindSet() then
             repeat
-                TotalUnPaidAmount := TotalUnPaidAmount + InvoicesRec."InvoiceAmount";
+                TotalUnPaidAmount += InvoicesRec."InvoiceAmount";
             until InvoicesRec.Next() = 0;
-        end;
+
+        // Partially Paid: add only the unpaid portion
+        InvoicesRec.Reset();
+        InvoicesRec.SetRange("Status", Enum::"NVR PaymentStatusEnum"::PartiallyPaid);
+        if InvoicesRec.FindSet() then
+            repeat
+                PaidAmount := 0;
+                PaymentsRec.SetRange("InvoiceID", InvoicesRec."InvoiceID");
+                if PaymentsRec.FindSet() then
+                    repeat
+                        PaidAmount += PaymentsRec."PaymentAmount";
+                    until PaymentsRec.Next() = 0;
+                TotalUnPaidAmount += (InvoicesRec."InvoiceAmount" - PaidAmount);
+            until InvoicesRec.Next() = 0;
+
         exit(TotalUnPaidAmount);
     end;
     procedure GetHighestLoyaltyCustomer(): Record "NVR Customers"
@@ -84,34 +132,22 @@ codeunit 50109 "NVR RoleCentreHandler"
         exit(HighestLoyaltyCustomer);
     end;
     procedure GetTotalNumberofSalesOrders(): Integer
+    var
+        SalesOrderRec: Record "NVR Sales Orders";
     begin
-        //search for all Sales orders with the Status type Not Paid
-        exit(GetnumberOfPaidSalesOrders() + GetnumberOfUnPaidSalesOrders());
+        exit(SalesOrderRec.Count());
     end;
     procedure GetTotalNumberofInvoices(): Integer
     var
         Invoices: Record "NVR Invoices";
-
     begin
-        //Count all the invoice records in the NVR Invoices Table
-        if Invoices.FindSet() then begin
-            repeat
-                exit(Invoices.Count());
-            until Invoices.Next() = 0;
-        end;
+        exit(Invoices.Count());
     end;
     procedure GetTotalNumberofPayments(): Integer
     var
         Payments: Record "NVR Payments";
     begin
-        //search for all Payments with the Status type Not Paid
-        //Payments.SetRange("Payment Status", Enum::"NVR PaymentStatusEnum"::Paid);
-        if Payments.FindSet() then begin
-            repeat
-                exit(Payments.Count());
-            until Payments.Next() = 0;
-        end;
-        exit(0); // Return 0 if no payments found
+        exit(Payments.Count());
     end;
     procedure GetHighestPaymentAmount(): Decimal
     var
@@ -132,8 +168,8 @@ codeunit 50109 "NVR RoleCentreHandler"
         ProductsRec: Record "NVR SalesOrderLineProducts";
         Products: Record "NVR Products";
         MostSoldProductID: Code[20];
-        MostSoldQuantity: Integer;
-        CurrentProductQuantity: Integer;
+        MostSoldQuantity: Decimal; // Changed from Integer to Decimal
+        CurrentProductQuantity: Decimal; // Changed from Integer to Decimal
     begin
         MostSoldQuantity := 0;
 
@@ -160,10 +196,10 @@ codeunit 50109 "NVR RoleCentreHandler"
     var
         Products: Record "NVR Products";
         Categories: Record "NVR Product Categories";
-        CategoryCount: Dictionary of [Code[20], Integer];
+        CategoryCount: Dictionary of [Code[20], Decimal]; // Changed value type to Decimal
         MostListedCategoryID: Code[20];
-        MostListedCount: Integer;
-        CurrentCount: Integer;
+        MostListedCount: Decimal; // Changed from Integer to Decimal
+        CurrentCount: Decimal; // Changed from Integer to Decimal
         CategoryID: Code[20];
     begin
         MostListedCount := 0;
@@ -208,5 +244,116 @@ codeunit 50109 "NVR RoleCentreHandler"
             until SalesOrderRec.Next() = 0;
         end;
         exit(TotalSalesOrderAmount);
+    end;
+    procedure GetTotalInvoiceAmount(): Decimal
+    var
+        InvoicesRec: Record "NVR Invoices";
+        TotalInvoiceAmount: Decimal;
+    begin
+        TotalInvoiceAmount := 0;
+        if InvoicesRec.FindSet() then
+            repeat
+                TotalInvoiceAmount += InvoicesRec."InvoiceAmount";
+            until InvoicesRec.Next() = 0;
+        exit(TotalInvoiceAmount);
+    end;
+    procedure GetTotalPaidSalesOrderAmount(): Decimal
+    var
+        SalesOrderRec: Record "NVR Sales Orders";
+        InvoiceRec: Record "NVR Invoices";
+        PaymentRec: Record "NVR Payments";
+        TotalPaidSalesOrderAmount: Decimal;
+        PaidAmount: Decimal;
+    begin
+        TotalPaidSalesOrderAmount := 0;
+
+        if SalesOrderRec.FindSet() then
+            repeat
+                if (SalesOrderRec."Payment Status" = Enum::"NVR PaymentStatusEnum"::Paid) or
+                (SalesOrderRec."Payment Status" = Enum::"NVR PaymentStatusEnum"::PartiallyPaid) then
+                begin
+                    InvoiceRec.SetRange("SalesOrderID", SalesOrderRec."SalesOrderID");
+                    if InvoiceRec.FindSet() then begin
+                        repeat
+                            case InvoiceRec.Status of
+                                Enum::"NVR PaymentStatusEnum"::Paid:
+                                    TotalPaidSalesOrderAmount += InvoiceRec."InvoiceAmount";
+                                Enum::"NVR PaymentStatusEnum"::PartiallyPaid:
+                                    begin
+                                        PaidAmount := 0;
+                                        PaymentRec.SetRange("InvoiceID", InvoiceRec."InvoiceID");
+                                        if PaymentRec.FindSet() then
+                                            repeat
+                                                PaidAmount += PaymentRec."PaymentAmount";
+                                            until PaymentRec.Next() = 0;
+                                        TotalPaidSalesOrderAmount += PaidAmount;
+                                    end;
+                            end;
+                        until InvoiceRec.Next() = 0;
+                    end else
+                        // No invoices, add sales order amount
+                        TotalPaidSalesOrderAmount += SalesOrderRec.TotalAmount;
+                end;
+            until SalesOrderRec.Next() = 0;
+
+        exit(TotalPaidSalesOrderAmount);
+    end;
+    procedure GetTotalUnPaidSalesOrderAmount(): Decimal
+    begin
+        exit(GetTotalSalesOrderAmount() - GetTotalPaidSalesOrderAmount());
+    end;
+    /*var
+        SalesOrderRec: Record "NVR Sales Orders";
+        InvoiceRec: Record "NVR Invoices";
+        PaymentRec: Record "NVR Payments";
+        TotalUnPaidSalesOrderAmount: Decimal;
+        PaidAmount: Decimal;
+    begin
+        TotalUnPaidSalesOrderAmount := 0;
+
+        if SalesOrderRec.FindSet() then
+            repeat
+                if (SalesOrderRec."Payment Status" = Enum::"NVR PaymentStatusEnum"::NotPaid) or
+                (SalesOrderRec."Payment Status" = Enum::"NVR PaymentStatusEnum"::PartiallyPaid) then
+                begin
+                    InvoiceRec.SetRange("SalesOrderID", SalesOrderRec."SalesOrderID");
+                    if InvoiceRec.FindSet() then begin
+                        repeat
+                            case InvoiceRec.Status of
+                                Enum::"NVR PaymentStatusEnum"::NotPaid:
+                                    TotalUnPaidSalesOrderAmount += InvoiceRec."InvoiceAmount";
+                                Enum::"NVR PaymentStatusEnum"::PartiallyPaid:
+                                    begin
+                                        PaidAmount := 0;
+                                        PaymentRec.SetRange("InvoiceID", InvoiceRec."InvoiceID");
+                                        if PaymentRec.FindSet() then
+                                            repeat
+                                                PaidAmount += PaymentRec."PaymentAmount";
+                                            until PaymentRec.Next() = 0;
+                                        TotalUnPaidSalesOrderAmount += (InvoiceRec."InvoiceAmount" - PaidAmount);
+                                    end;
+                            end;
+                        until InvoiceRec.Next() = 0;
+                    end else
+                        // No invoices, add sales order amount
+                        TotalUnPaidSalesOrderAmount += SalesOrderRec.TotalAmount;
+                end;
+            until SalesOrderRec.Next() = 0;
+
+        exit(TotalUnPaidSalesOrderAmount);
+    end;*/
+    procedure GetnumberOfPartiallyPaidSalesOrders(): Integer
+    var
+        SalesOrderRec: Record "NVR Sales Orders";
+        PartiallyPaidSalesOrdersCount: Integer;
+    begin
+        //search for all Sales orders with the Status type Partially Paid
+        SalesOrderRec.SetRange("Payment Status", Enum::"NVR PaymentStatusEnum"::PartiallyPaid);
+        if SalesOrderRec.FindSet() then begin
+            repeat
+                PartiallyPaidSalesOrdersCount := PartiallyPaidSalesOrdersCount + 1;
+            until SalesOrderRec.Next() = 0;
+        end;
+        exit(PartiallyPaidSalesOrdersCount);
     end;
 }

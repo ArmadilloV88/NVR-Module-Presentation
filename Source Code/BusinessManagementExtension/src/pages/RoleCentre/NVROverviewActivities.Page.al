@@ -32,10 +32,10 @@ page 50118 "NVR Overview Activities"
             group(TextFields)
             {
                 Caption = 'Most Loyal Customer';
-                field(MostLoyalCustomerName; HighestLoyaltyCustomerName)
+                field(MostLoyalCustomerName; HighestLoyaltyCustomerID)
                 {
                     Caption = 'Most Loyal Customer';
-                    ToolTip = 'Shows the name of the most loyal customer.';
+                    ToolTip = 'Shows the ID of the most loyal customer.';
                 }
                 field(MostLoyalCustomerLoyaltyPoints; HighestLoyaltyCustomer."Loyalty Points")
                 {
@@ -52,7 +52,7 @@ page 50118 "NVR Overview Activities"
         TotalNumberofInvoices := GetTotalNumberofInvoices();
         TotalNumberofPayments := GetTotalNumberofPayments();
         HighestLoyaltyCustomer := GetHighestLoyaltyCustomer();
-        HighestLoyaltyCustomerName := HighestLoyaltyCustomer.Name;
+        HighestLoyaltyCustomerID := HighestLoyaltyCustomer.CustomerID;
     end;
 
     var
@@ -60,7 +60,7 @@ page 50118 "NVR Overview Activities"
         TotalNumberofInvoices: Integer;
         TotalNumberofPayments: Integer;
         HighestLoyaltyCustomer: Record "NVR Customers";
-        HighestLoyaltyCustomerName: Text[100];
+        HighestLoyaltyCustomerID: Code[10];
     local procedure GetTotalNumberofSalesOrders(): Integer
     var
         Handler : Codeunit "NVR RoleCentreHandler";

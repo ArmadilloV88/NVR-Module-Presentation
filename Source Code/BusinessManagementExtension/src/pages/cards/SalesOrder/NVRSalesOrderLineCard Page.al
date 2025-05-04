@@ -16,13 +16,14 @@ page 50114 "NVR Sales Order Line Card"
                     Caption = 'Sales Order Line ID';
                     ApplicationArea = All;
                     Editable = false;
+                    TableRelation = "NVR Sales Order Line"."Sales Order Line ID";
                 }
 
                 field("NVR Sales Order ID"; Rec.SalesOrderID)
                 {
                     Caption = 'Sales Order ID';
                     ApplicationArea = All;
-                    Editable = false;
+                    Editable = true;
                     TableRelation = "NVR Sales Orders".SalesOrderID;
                 }
 

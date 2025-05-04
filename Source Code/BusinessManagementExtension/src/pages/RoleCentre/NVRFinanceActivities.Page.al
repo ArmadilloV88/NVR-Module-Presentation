@@ -28,6 +28,20 @@ page 50119 "NVR Finance Activities"
                     //color this field red if overdue
                     StyleExpr = 'Favorable';
                 }
+                field(PartiallyPaidInvoices; PartiallyPaidInvoicesCount)
+                {
+                    Caption = 'Partially Paid Invoices';
+                    //DrillDownPageId = "NVR Invoice List"; // Navigate to the Invoice List
+                    ToolTip = 'Shows the number of partially paid invoices.';
+                    //color this field red if overdue
+                    StyleExpr = 'UnFavorable';
+                }
+                field(TotalInvoiceAmount; TotalInvoiceAmount)
+                {
+                    Caption = 'Total Invoice Amount';
+                    ToolTip = 'Shows the total amount of all invoices.';
+                    //StyleExpr = 'Favorable';
+                }
                 field(TotalUnPaidAmountField; TotalUnPaidAmount)
                 {
                     Caption = 'Total Unpaid Amount';
@@ -40,11 +54,14 @@ page 50119 "NVR Finance Activities"
                     ToolTip = 'Shows the total amount paid for invoices.';
                     StyleExpr = 'Favorable';
                 }
+            }
+            group(TextFields)
+            {
+                Caption = 'Additional Information';
                 field(HighestPaymentAmount; HighestPaymentAmount)
                 {
                     Caption = 'Highest Payment Amount';
                     ToolTip = 'Shows the highest payment amount.';
-                    StyleExpr = 'Favorable';
                 }
             }
         }
@@ -58,6 +75,8 @@ page 50119 "NVR Finance Activities"
         TotalPaidAmount := GetTotalPaidAmount();
         TotalUnPaidAmount := GetTotalUnPaidAmount();
         HighestPaymentAmount := GetHighestPaymentAmount();
+        PartiallyPaidInvoicesCount := GetPartiallyPaidInvoicesCount();
+        TotalInvoiceAmount := GetTotalInvoiceAmount();
         //
     end;
 
@@ -67,6 +86,22 @@ page 50119 "NVR Finance Activities"
         PaidInvoicesCount: Integer;
         TotalPaidAmount: Decimal;
         TotalUnPaidAmount: Decimal;
+        PartiallyPaidInvoicesCount: Integer;
+        TotalInvoiceAmount: Decimal;
+
+    local procedure GetTotalInvoiceAmount(): Decimal
+    var
+        Handler : Codeunit "NVR RoleCentreHandler";
+    begin
+        exit(Handler.GetTotalInvoiceAmount())
+    end;
+
+    local procedure GetPartiallyPaidInvoicesCount(): Integer
+    var
+        Handler : Codeunit "NVR RoleCentreHandler";
+    begin
+        exit(Handler.GetPartiallyPaidInvoicesCount())
+    end;
     local procedure GetUnPaidInvoicesCount(): Integer
     var
         Handler : Codeunit "NVR RoleCentreHandler";

@@ -1,6 +1,6 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.9 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="26.0.9">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
-    <mxGraphModel dx="5253" dy="3203" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
+    <mxGraphModel dx="3134" dy="1936" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -622,12 +622,12 @@
         </mxCell>
         <mxCell id="fVkNLm9y7KEnHsYmu0PV-33" value="One customer can have none or many rewards based of the loyalty level" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;" parent="fVkNLm9y7KEnHsYmu0PV-32" vertex="1" connectable="0">
           <mxGeometry x="-0.0603" y="2" relative="1" as="geometry">
-            <mxPoint x="17" y="-11" as="offset" />
+            <mxPoint x="-27" y="89" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="fVkNLm9y7KEnHsYmu0PV-34" value="none or many rewards can be assigned to one customer" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;" parent="fVkNLm9y7KEnHsYmu0PV-32" vertex="1" connectable="0">
           <mxGeometry x="0.2084" y="1" relative="1" as="geometry">
-            <mxPoint x="-26" y="16" as="offset" />
+            <mxPoint x="24" y="-93" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="-SPS8dP-YUAFJ_YG1j79-2" value="Sales Order Product Link" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
@@ -850,7 +850,7 @@
         </mxCell>
         <mxCell id="VeOWXodoQy-L_PdtvrF1-18" value="One Invoice corresponds to one sales order" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="VeOWXodoQy-L_PdtvrF1-16" vertex="1" connectable="0">
           <mxGeometry x="0.4117" y="-2" relative="1" as="geometry">
-            <mxPoint x="-112" y="46" as="offset" />
+            <mxPoint x="-132" y="52" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="VeOWXodoQy-L_PdtvrF1-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERmandOne;endFill=0;" parent="1" source="C-vyLk0tnHw3VtMMgP7b-3" edge="1">
@@ -936,50 +936,60 @@
             <mxPoint x="-18" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-1" value="LoyaltyRewardLevel" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
-          <mxGeometry x="310" y="1400" width="250" height="120" as="geometry" />
+        <mxCell id="auNguREq5DfR2AqDAXWN-1" value="LoyaltyRewardLevel" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
+          <mxGeometry x="310" y="800" width="250" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-2" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="auNguREq5DfR2AqDAXWN-1">
+        <mxCell id="auNguREq5DfR2AqDAXWN-2" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" parent="auNguREq5DfR2AqDAXWN-1" vertex="1">
           <mxGeometry y="30" width="250" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-3" value="PK" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;" vertex="1" parent="auNguREq5DfR2AqDAXWN-2">
+        <mxCell id="auNguREq5DfR2AqDAXWN-3" value="PK" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;" parent="auNguREq5DfR2AqDAXWN-2" vertex="1">
           <mxGeometry width="30" height="30" as="geometry">
             <mxRectangle width="30" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-4" value="EntryID Integer NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;" vertex="1" parent="auNguREq5DfR2AqDAXWN-2">
+        <mxCell id="auNguREq5DfR2AqDAXWN-4" value="EntryID Integer NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;" parent="auNguREq5DfR2AqDAXWN-2" vertex="1">
           <mxGeometry x="30" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-5" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="auNguREq5DfR2AqDAXWN-1">
+        <mxCell id="auNguREq5DfR2AqDAXWN-5" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" parent="auNguREq5DfR2AqDAXWN-1" vertex="1">
           <mxGeometry y="60" width="250" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-6" value="FK1" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;" vertex="1" parent="auNguREq5DfR2AqDAXWN-5">
+        <mxCell id="auNguREq5DfR2AqDAXWN-6" value="FK1" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;" parent="auNguREq5DfR2AqDAXWN-5" vertex="1">
           <mxGeometry width="30" height="30" as="geometry">
             <mxRectangle width="30" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-7" value="Cust.LoyaltyID Code[20] NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="auNguREq5DfR2AqDAXWN-5">
+        <mxCell id="auNguREq5DfR2AqDAXWN-7" value="Cust.LoyaltyID Code[20] NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" parent="auNguREq5DfR2AqDAXWN-5" vertex="1">
           <mxGeometry x="30" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERoneToMany;endFill=0;" edge="1" parent="1" source="fVkNLm9y7KEnHsYmu0PV-5" target="auNguREq5DfR2AqDAXWN-5">
+        <mxCell id="auNguREq5DfR2AqDAXWN-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmandOne;startFill=0;endArrow=ERoneToMany;endFill=0;" parent="1" source="fVkNLm9y7KEnHsYmu0PV-5" target="auNguREq5DfR2AqDAXWN-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-9" value="FK2" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;" vertex="1" parent="1">
-          <mxGeometry x="310" y="1490" width="30" height="30" as="geometry">
+        <mxCell id="AIAsVIGjeC47OCdYSQsZ-2" value="1 level can correspond to many types of reward" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;" vertex="1" connectable="0" parent="auNguREq5DfR2AqDAXWN-8">
+          <mxGeometry x="0.0974" y="-1" relative="1" as="geometry">
+            <mxPoint x="-21" y="19" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AIAsVIGjeC47OCdYSQsZ-3" value="Many rewards can correspond to 1 level" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];rotation=-90;" vertex="1" connectable="0" parent="auNguREq5DfR2AqDAXWN-8">
+          <mxGeometry x="-0.2769" y="-4" relative="1" as="geometry">
+            <mxPoint x="16" y="-24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="auNguREq5DfR2AqDAXWN-9" value="FK2" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;" parent="1" vertex="1">
+          <mxGeometry x="310" y="890" width="30" height="30" as="geometry">
             <mxRectangle width="30" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-11" value="&lt;span style=&quot;text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp; RewardID Code[20] NOT NULL&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="340" y="1490" width="220" height="30" as="geometry" />
+        <mxCell id="auNguREq5DfR2AqDAXWN-11" value="&lt;span style=&quot;text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp; RewardID Code[20] NOT NULL&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="890" width="220" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="auNguREq5DfR2AqDAXWN-12" value="" style="endArrow=none;html=1;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="auNguREq5DfR2AqDAXWN-11">
+        <mxCell id="auNguREq5DfR2AqDAXWN-12" value="" style="endArrow=none;html=1;rounded=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" parent="1" target="auNguREq5DfR2AqDAXWN-11" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="340" y="1520" as="sourcePoint" />
-            <mxPoint x="550" y="1330" as="targetPoint" />
+            <mxPoint x="340" y="920" as="sourcePoint" />
+            <mxPoint x="550" y="730" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>

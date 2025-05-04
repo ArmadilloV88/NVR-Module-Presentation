@@ -78,8 +78,6 @@ codeunit 50112 "NVR Loyalty Points Handler"
         exit(CustomerRecord);
     end;
 }
-
-
 //this code unit will need further verification. 
 //Currently set to level : 1
 //1 - Only checks if the invcoices are paid per the Sales Order amount due, have not verified if the salesorders have the correct lines.

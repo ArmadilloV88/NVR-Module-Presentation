@@ -8,13 +8,13 @@ codeunit 50107 "NVR SalesOrderLineHandler"
 
     procedure SetSalesOrderID(NewSalesOrderID: Code[20])
     begin
-        Message('Setting Sales Order ID to %1', NewSalesOrderID);
+        //Message('Setting Sales Order ID to %1', NewSalesOrderID);
         SalesOrderID := NewSalesOrderID;
     end;
 
     procedure GetSalesOrderID(): Code[20]
     begin
-        Message('Getting Sales Order ID: %1', SalesOrderID);
+        //Message('Getting Sales Order ID: %1', SalesOrderID);
         exit(SalesOrderID);
     end;
 
